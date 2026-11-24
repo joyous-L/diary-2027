@@ -85,3 +85,17 @@ export function datePill(label, en, { red = false, today = false, size = '' } = 
   const cls = ['dpill', red && 'red', today && 'today', size].filter(Boolean).join(' ');
   return `<span class="${cls}"><b>${label}</b>${en ? `<small>${en}</small>` : ''}</span>`;
 }
+
+// 습관 요일: days = [0(월)…6(일)], 비어 있으면 매일
+export function isDue(h, key) {
+  if (!h?.days?.length) return true;
+  const [y, m, d] = key.split('-').map(Number);
+  return h.days.includes(monIndex(y, m, d));
+}
+export function dayLabel(days) {
+  const s = (days || []).join('');
+  if (!s || s === '0123456') return '매일';
+  if (s === '01234') return '평일';
+  if (s === '56') return '주말';
+  return days.map((i) => DOW_KO[i]).join('·');
+}

@@ -1,6 +1,6 @@
 // 습관: 왼쪽 = 습관 목록(추가·켜기/끄기·이름 눌러 고치기), 오른쪽 = 이달의 체크 표
 // iPhone: 칩으로 고른 습관의 한 달 달력 + 목록
-import { todayParts, todayKey, ymd, ym, addMonths, daysIn, monIndex, esc, CAT_COLOR, HOLIDAYS } from '../util.js';
+import { todayParts, todayKey, ymd, ym, addMonths, daysIn, monIndex, esc, CAT_COLOR, HOLIDAYS, DOW_KO, isDue, dayLabel } from '../util.js';
 import { getHabits, habitAction, setHabit } from '../api.js';
 
 const ARROW_L = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>';
@@ -29,9 +29,9 @@ function stats(st, h) {
   const from = h.start && h.start > first ? h.start : first;
   const to = st.today < last ? st.today : last;
   let total = 0;
-  if (from <= to) total = Number(to.slice(8)) - Number(from.slice(8)) + 1;
+  for (let d = Number(from.slice(8)); from <= to && d <= Number(to.slice(8)); d++) if (isDue(h, ymd(st.y, st.m, d))) total++;
   const done = Object.keys(st.checks[h.id] || {}).filter((k) => k >= from && k <= to).length;
-  return { done, total, pct: total ? Math.round((done / total) * 100) : 0 };
+  return { done, total, pct: total ? Math.min(100, Math.round((done / total) * 100)) : 0 };
 }
 
 const startLabel = (s) => (s ? `${Number(s.slice(5, 7))}.${Number(s.slice(8))}부터` : '');
@@ -47,7 +47,7 @@ function rowHtml(st, h) {
   return `<div class="hl-row${h.on ? '' : ' off'}">
     <span class="bar" style="background:${c}"></span>
     <button type="button" class="hl-name" data-edit="${h.id}" aria-label="${esc(h.name)} 고치기">
-      <span class="n">${esc(h.name)}</span><small>${esc(h.cat)}${h.start ? ` · ${startLabel(h.start)}` : ''}</small>
+      <span class="n">${esc(h.name)}</span><small>${esc(h.cat)} · ${dayLabel(h.days)}${h.start ? ` · ${startLabel(h.start)}` : ''}</small>
     </button>
     <div class="hl-prog"><div class="tr"><div style="width:${s.pct}%;background:${c}"></div></div><small>${s.done}일 / ${s.total}일 · ${s.pct}%</small></div>
     ${switchHtml(h)}
@@ -83,6 +83,7 @@ function tableHtml(st) {
       const key = ymd(st.y, st.m, d);
       const v = !!st.checks[h.id]?.[key];
       const fut = key > st.today;
+      if (!v && !isDue(h, key)) { cells.push('<span class="tc rest" aria-hidden="true"><i></i></span>'); continue; }
       cells.push(`<button type="button" class="tc${key === st.today ? ' today' : ''}" data-habit="${h.id}" data-day="${key}" aria-pressed="${v}" aria-label="${esc(h.name)} ${st.m}월 ${d}일"${fut ? ' disabled' : ''}><i style="${v ? `background:${c};border-color:${c}` : ''}"></i></button>`);
     }
     return `<div class="ht-row"><span class="ht-name">${esc(h.name)}</span><div class="ht-cells" style="--n:${n}">${cells.join('')}</div></div>`;
@@ -140,6 +141,7 @@ function calHtml(st, h) {
     const key = ymd(st.y, st.m, d);
     const v = !!st.checks[h.id]?.[key];
     const fut = key > st.today;
+    if (!v && !isDue(h, key)) { cells.push(`<span class="cc rest"><span>${d}</span></span>`); continue; }
     cells.push(`<button type="button" class="cc" data-habit="${h.id}" data-day="${key}" aria-pressed="${v}" aria-label="${esc(h.name)} ${st.m}월 ${d}일"${fut ? ' disabled' : ''}>
       <span style="${v ? `background:${c};color:var(--paper);` : ''}${key === st.today ? `border-color:${c};` : ''}">${d}</span></button>`);
   }
@@ -162,7 +164,7 @@ function singleHtml(st) {
   const list = st.habits.map((h) => {
     const c = color(h);
     return `<div class="hs-row${h.on ? '' : ' off'}"><span class="bar" style="background:${c}"></span>
-      <button type="button" class="hl-name" data-edit="${h.id}" aria-label="${esc(h.name)} 고치기"><span class="n">${esc(h.name)}</span><small style="color:${c}">${esc(h.cat)} · ${stats(st, h).pct}%</small></button>
+      <button type="button" class="hl-name" data-edit="${h.id}" aria-label="${esc(h.name)} 고치기"><span class="n">${esc(h.name)}</span><small style="color:${c}">${esc(h.cat)} · ${dayLabel(h.days)} · ${stats(st, h).pct}%</small></button>
       ${switchHtml(h, true)}</div>`;
   }).join('');
   return `${headHtml(st, true)}
@@ -184,6 +186,8 @@ function dialogHtml(st) {
       <div class="dlg-h"><span class="head">${d.id ? '습관 고치기' : '습관 추가'}</span><button type="button" class="icon-btn" data-close aria-label="닫기">✕</button></div>
       <label class="hf"><span>이름</span><input id="h-name" maxlength="60" placeholder="예: 탄천 걷기" value="${esc(d.name)}" autocomplete="off"></label>
       <div class="hf"><span>분류</span><div class="cats">${cats}</div></div>
+      <div class="hf"><span>요일 <small class="muted">${d.days.length ? dayLabel(d.days) : '고르지 않으면 매일'}</small></span><div class="cats dows">${DOW_KO.map((k, i) => `<button type="button" class="catbtn dowbtn${i === 6 ? ' red' : ''}" data-dow="${i}" aria-pressed="${d.days.includes(i)}">${k}</button>`).join('')}
+        <button type="button" class="catbtn dowbtn quick" data-dows="01234">평일</button><button type="button" class="catbtn dowbtn quick" data-dows="012345">월~토</button><button type="button" class="catbtn dowbtn quick" data-dows="">매일</button></div></div>
       <div class="hdlg-f">
         ${d.id ? `<button type="button" class="linkbtn danger" data-del>${d.confirmDel ? '정말 지울까요? 한 번 더 누르면 삭제' : '이 습관 지우기'}</button>` : '<span></span>'}
         <span class="msg" role="status">${esc(d.msg || '')}</span>
@@ -219,7 +223,7 @@ export async function renderHabit(el, ctx) {
   paint();
 
   const openDlg = (h) => {
-    st.dlg = h ? { id: h.id, name: h.name, cat: h.cat || '생활', focus: true } : { id: null, name: '', cat: '건강관리', focus: true };
+    st.dlg = h ? { id: h.id, name: h.name, cat: h.cat || '생활', days: [...(h.days || [])], focus: true } : { id: null, name: '', cat: '건강관리', days: [], focus: true };
     paint();
   };
 
@@ -229,8 +233,8 @@ export async function renderHabit(el, ctx) {
     if (!d.name) { d.msg = '이름을 써 주세요'; d.focus = true; paint(); return; }
     d.busy = true; d.msg = ''; paint();
     const r = d.id
-      ? await habitAction({ action: 'update', id: d.id, name: d.name, cat: d.cat })
-      : await habitAction({ action: 'add', name: d.name, cat: d.cat });
+      ? await habitAction({ action: 'update', id: d.id, name: d.name, cat: d.cat, days: d.days })
+      : await habitAction({ action: 'add', name: d.name, cat: d.cat, days: d.days });
     if (!r.ok) { d.busy = false; d.msg = errText(r.error); paint(); return; }
     if (d.id) st.habits = st.habits.map((h) => (h.id === d.id ? r.habit : h));
     else { st.habits.push(r.habit); st.sel = r.habit.id; }
@@ -244,6 +248,16 @@ export async function renderHabit(el, ctx) {
       if (closeBtn && (closeBtn.classList.contains('dlg-back') ? t === closeBtn : true)) { st.dlg = null; paint(); return; }
       const cat = t.closest('[data-cat]');
       if (cat) { st.dlg.name = el.querySelector('#h-name').value; st.dlg.cat = cat.dataset.cat; paint(); return; }
+      const dow = t.closest('[data-dow]');
+      if (dow) {
+        const i = Number(dow.dataset.dow), ds = st.dlg.days;
+        st.dlg.name = el.querySelector('#h-name').value;
+        st.dlg.days = (ds.includes(i) ? ds.filter((x) => x !== i) : [...ds, i]).sort((a, b) => a - b);
+        if (st.dlg.days.length === 7) st.dlg.days = [];
+        paint(); return;
+      }
+      const dows = t.closest('[data-dows]');
+      if (dows) { st.dlg.name = el.querySelector('#h-name').value; st.dlg.days = [...dows.dataset.dows].map(Number); paint(); return; }
       if (t.closest('[data-save]')) { if (!st.dlg.busy) save(); return; }
       if (t.closest('[data-del]')) {
         const d = st.dlg;

@@ -32,6 +32,7 @@ export async function onRequestGet({ request, env }) {
       id: p.id,
       name: plain(p.properties['이름']?.title),
       cat: p.properties['분류']?.select?.name || '',
+      days: [...new Set((p.properties['요일']?.multi_select || []).map((o) => '월화수목금토일'.indexOf(o.name)).filter((i) => i >= 0))].sort((a, b) => a - b),
     }));
 
     const checks = {};

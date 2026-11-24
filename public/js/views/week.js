@@ -2,7 +2,7 @@
 import { getEvents, groupByDate, getWeek, saveDiary, setHabit } from '../api.js';
 import {
   todayKey, parseKey, addDaysKey, weekStartOf, weekTitle, monIndex, esc, eventLabel,
-  DOW_KO, DOW_EN_LOWER, HOLIDAYS, CAT_COLOR, datePill } from '../util.js';
+  DOW_KO, DOW_EN_LOWER, HOLIDAYS, CAT_COLOR, datePill, isDue } from '../util.js';
 
 const ARROW_L = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>';
 const ARROW_R = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg>';
@@ -36,6 +36,7 @@ function habitBlock(st, compactLabel) {
   return st.habits.map((h) => {
     const dots = st.days.map((day, i) => {
       const on = !!st.checks[h.id]?.[day.key];
+      if (!on && !isDue(h, day.key)) return `<span class="hdot rest${st.sel === day.key ? ' col' : ''}" aria-hidden="true"><i></i></span>`;
       const color = CAT_COLOR[h.cat] || 'var(--accent)';
       return `<button type="button" class="hdot${st.sel === day.key ? ' col' : ''}" data-habit="${h.id}" data-day="${day.key}" aria-pressed="${on}"
         aria-label="${esc(h.name)} ${DOW_KO[i]}요일"><i style="border-color:${on ? color : 'var(--hint)'};background:${on ? color : 'transparent'}"></i></button>`;
@@ -79,7 +80,7 @@ function spreadHtml(st) {
       <a class="icon-btn" href="#/week/${next}" aria-label="다음 주">${ARROW_R}</a>
     </header>
     <div class="hhead"><span class="sec">습관</span><span class="hdots">${DOW_KO.map((d, i) => `<span${i === 6 ? ' style="color:var(--red)"' : ''}>${d}</span>`).join('')}</span></div>
-    ${habitBlock(st)}
+    <div class="whab-list">${habitBlock(st)}</div>
   </section>`;
   const cells = st.days.map((d) => dayCell(st, d));
   return `

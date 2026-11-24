@@ -6,6 +6,11 @@
 import { DB, notion, queryAll, plain, json, NotionError } from '../../lib/notion.js';
 
 const CATS = ['자기계발', '건강관리', '생활', '마음'];
+const DOW = ['월', '화', '수', '목', '금', '토', '일'];
+// 요일 칸(비우면 매일) ↔ 0(월)~6(일) 숫자 목록
+const readDays = (p) => [...new Set((p.properties['요일']?.multi_select || []).map((o) => DOW.indexOf(o.name)).filter((i) => i >= 0))].sort((a, b) => a - b);
+const daysProp = (days) => ({ multi_select: days.map((i) => ({ name: DOW[i] })) });
+const cleanDays = (v) => (Array.isArray(v) ? [...new Set(v.map(Number).filter((i) => Number.isInteger(i) && i >= 0 && i <= 6))].sort((a, b) => a - b) : undefined);
 const ID_RE = /^[0-9a-f]{32}$/;
 const MONTH_RE = /^(\d{4})-(\d{2})$/;
 
@@ -26,6 +31,7 @@ const toHabit = (p) => ({
   on: !!p.properties['사용']?.checkbox,
   order: p.properties['순서']?.number ?? 0,
   start: p.properties['시작일']?.date?.start?.slice(0, 10) || '',
+  days: readDays(p),
 });
 
 export async function onRequestGet({ request, env }) {
@@ -63,6 +69,8 @@ export async function onRequestPost({ request, env }) {
   try { body = await request.json(); } catch { return json({ error: 'bad_request' }, 400); }
   const name = typeof body.name === 'string' ? body.name.trim().slice(0, 60) : undefined;
   const cat = body.cat;
+  let days = cleanDays(body.days);
+  if (days?.length === 7) days = [];
   if (cat !== undefined && !CATS.includes(cat)) return json({ error: 'bad_request' }, 400);
 
   try {
@@ -78,6 +86,7 @@ export async function onRequestPost({ request, env }) {
           '사용': { checkbox: true },
           '순서': { number: nextOrder },
           '시작일': { date: { start: kstToday() } },
+          '요일': daysProp(days || []),
         },
       });
       return json({ ok: true, habit: toHabit(page) });
@@ -91,6 +100,7 @@ export async function onRequestPost({ request, env }) {
       if (name) props['이름'] = { title: [{ type: 'text', text: { content: name } }] };
       if (cat) props['분류'] = { select: { name: cat } };
       if (typeof body.on === 'boolean') props['사용'] = { checkbox: body.on };
+      if (days) props['요일'] = daysProp(days);
       if (!Object.keys(props).length) return json({ error: 'bad_request' }, 400);
       const page = await notion(env, 'PATCH', `/pages/${id}`, { properties: props });
       return json({ ok: true, habit: toHabit(page) });
