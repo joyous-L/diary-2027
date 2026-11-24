@@ -65,3 +65,17 @@ export async function getQt(date) {
   }
 }
 export const saveQt = (date, med, pray) => post('/api/qt', { date, med, pray });
+
+async function getJson(path, empty) {
+  try {
+    const res = await fetch(path, { credentials: 'same-origin' });
+    const data = await res.json().catch(() => ({}));
+    return res.ok ? data : { configured: true, error: data.error || `http_${res.status}`, ...empty };
+  } catch {
+    return { configured: true, error: 'offline', ...empty };
+  }
+}
+export const getBooks = () => getJson('/api/books', { books: [] });
+export const bookAction = (body) => post('/api/books', body);
+export const getMarks = () => getJson('/api/marks', { marks: [] });
+export const markAction = (body) => post('/api/marks', body);

@@ -355,3 +355,68 @@ body[data-mode="single"] .dlg.hdlg { height: auto; min-height: 100%; }
 .qs-tg .muted { font-size: 13px; }
 .qs-note .qt-note { padding: 0 0 16px; background: none; overflow: visible; }
 .qt-verses .vsub { font-weight: 700; font-size: 14px; padding-left: 28px; margin-top: 4px; }
+
+/* ── 독서 ── */
+.rd { height: 100%; padding: 40px 40px 30px 44px; display: flex; flex-direction: column; gap: 14px; }
+.page.right .rd { padding: 40px 44px 30px 40px; }
+.rd-head { height: 64px; display: flex; align-items: flex-end; justify-content: space-between; padding-bottom: 10px; flex: none; }
+.rd-head .t { display: flex; align-items: flex-end; gap: 12px; }
+.rd-head .t .head { font-size: 30px; }
+.rd-head .cnt { font-family: var(--head); font-size: 15px; color: var(--muted); padding-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+.yr-nav { display: inline-flex; align-items: center; gap: 0; }
+.yr-nav .go-now { margin-left: 6px; font-family: var(--body); }
+.bk-head, .bk-row { display: grid; grid-template-columns: 36px 52px minmax(0, 1fr) 104px 78px 86px; }
+.bk-head { height: 38px; align-items: center; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); text-align: center; flex: none; }
+.bk-head span + span { border-left: 1px dashed var(--line-2); }
+.bk-body { display: flex; flex-direction: column; min-height: 0; }
+.bk-body.scroll { overflow-y: auto; scrollbar-width: thin; }
+.bk-row { all: unset; cursor: pointer; display: grid; grid-template-columns: 36px 52px minmax(0, 1fr) 104px 78px 86px; height: 38px; flex: none; border-bottom: 1px solid var(--line-3); font-size: 13px; }
+.bk-row:hover:not(.empty) { background: rgba(62, 92, 74, 0.05); }
+.bk-row.empty { cursor: default; }
+.bk-row span { display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.bk-row span + span { border-left: 1px dashed #E0D9CB; }
+.bk-row .no { background: #EFEAE0; font-size: 12px; color: var(--muted); }
+.bk-row .g { color: var(--muted); }
+.bk-row .t { justify-content: flex-start; padding-left: 10px; font-size: 14px; display: block; line-height: 38px; }
+.bk-row .p { font-size: 11px; color: var(--muted); }
+.hrow2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.rdlg input, .rdlg textarea { border-bottom: 1px solid var(--line-2) !important; font-size: 16px; }
+.rdlg input[type="date"] { font-size: 15px; min-height: 40px; }
+.rdlg textarea { min-height: 96px; resize: vertical; line-height: 1.7; padding: 6px 0; }
+.dlg.rdlg { width: 520px; max-height: 92%; overflow-y: auto; }
+/* 책갈피 카드 */
+.mk-filters { display: flex; flex-wrap: wrap; gap: 6px; flex: none; }
+.fchip { all: unset; cursor: pointer; min-height: 32px; padding: 0 13px; display: inline-flex; align-items: center; border-radius: 16px; font-size: 13px; background: #ECE6D9; }
+.fchip[aria-selected="true"] { background: var(--accent); color: var(--paper); }
+.mk-col { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 16px; padding-top: 6px; }
+.mk-col.scroll { overflow-y: auto; scrollbar-width: thin; padding-right: 4px; }
+.mk { all: unset; cursor: pointer; position: relative; display: flex; flex-direction: column; gap: 10px; padding: 22px 20px 16px; background: var(--paper-2); border-radius: 8px; flex: none; }
+.mk:hover { box-shadow: 0 0 0 1px var(--line-2); }
+.mk .ribbon { position: absolute; top: -4px; right: 22px; width: 14px; height: 32px; background: var(--accent); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%); }
+.mk .tx { padding-right: 30px; font-size: 16px; line-height: 1.7; white-space: pre-line; }
+.mk .meta { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--muted); }
+.mk .nt { padding-top: 8px; border-top: 1px dashed var(--line-2); font-size: 14px; line-height: 1.6; }
+.mk .nt small { color: var(--muted); font-size: 12px; margin-right: 8px; }
+.mk-add { all: unset; cursor: pointer; min-height: 90px; flex: none; border: 1px dashed #CFC8BA; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--hint); }
+.mk-add:hover { color: var(--accent); border-color: var(--accent); }
+/* iPhone 독서 */
+.seg { margin: 12px 16px 0; padding: 4px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: #EFEAE0; border-radius: 12px; flex: none; }
+.seg a { min-height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 9px; font-size: 15px; color: var(--muted); text-decoration: none; }
+.seg a[aria-selected="true"] { background: var(--paper); color: var(--ink); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+.rs-body { flex: 1; padding: 14px 16px 24px; display: flex; flex-direction: column; gap: 12px; }
+.rs-cap { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--muted); }
+.rs-cap .yr-nav { font-family: var(--head); font-size: 15px; color: var(--ink); margin-left: -8px; }
+.bs-row { all: unset; cursor: pointer; display: flex; gap: 14px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--line-3); }
+.bs-row .no { width: 28px; height: 28px; flex: none; border-radius: 6px; background: #EFEAE0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--muted); }
+.bs-row .mid { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.bs-row .tt { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.bs-row .t { font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bs-row .g { flex: none; font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #ECE6D9; color: var(--muted); }
+.bs-row small { font-size: 13px; color: var(--muted); }
+.bs-row .p { flex: none; font-size: 12px; color: var(--muted); }
+body[data-mode="single"] .dlg.rdlg { width: 100%; max-height: none; }
+body[data-mode="single"] .hrow2 { grid-template-columns: 1fr; gap: 18px; }
+.hf input, .hf textarea { width: 100%; box-sizing: border-box; }
+.bk-head + .bk-body { margin-top: -14px; }
+.bk-row { height: 36px; }
+.bk-row .t { line-height: 36px; }
