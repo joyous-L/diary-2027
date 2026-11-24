@@ -186,8 +186,8 @@ function dialogHtml(st) {
       <div class="dlg-h"><span class="head">${d.id ? '습관 고치기' : '습관 추가'}</span><button type="button" class="icon-btn" data-close aria-label="닫기">✕</button></div>
       <label class="hf"><span>이름</span><input id="h-name" maxlength="60" placeholder="예: 탄천 걷기" value="${esc(d.name)}" autocomplete="off"></label>
       <div class="hf"><span>분류</span><div class="cats">${cats}</div></div>
-      <div class="hf"><span>요일 <small class="muted">${d.days.length ? dayLabel(d.days) : '고르지 않으면 매일'}</small></span><div class="cats dows">${DOW_KO.map((k, i) => `<button type="button" class="catbtn dowbtn${i === 6 ? ' red' : ''}" data-dow="${i}" aria-pressed="${d.days.includes(i)}">${k}</button>`).join('')}
-        <button type="button" class="catbtn dowbtn quick" data-dows="01234">평일</button><button type="button" class="catbtn dowbtn quick" data-dows="012345">월~토</button><button type="button" class="catbtn dowbtn quick" data-dows="">매일</button></div></div>
+      <div class="hf"><span>요일 <small class="muted">${dayLabel(d.days)}</small></span><div class="cats dows">${DOW_KO.map((k, i) => `<button type="button" class="catbtn dowbtn${i === 6 ? ' red' : ''}" data-dow="${i}" aria-pressed="${d.days.includes(i)}">${k}</button>`).join('')}
+        <button type="button" class="catbtn dowbtn quick" data-dows="01234">평일</button><button type="button" class="catbtn dowbtn quick" data-dows="012345">월~토</button><button type="button" class="catbtn dowbtn quick" data-dows="0123456">매일</button></div></div>
       <div class="hdlg-f">
         ${d.id ? `<button type="button" class="linkbtn danger" data-del>${d.confirmDel ? '정말 지울까요? 한 번 더 누르면 삭제' : '이 습관 지우기'}</button>` : '<span></span>'}
         <span class="msg" role="status">${esc(d.msg || '')}</span>
@@ -223,7 +223,7 @@ export async function renderHabit(el, ctx) {
   paint();
 
   const openDlg = (h) => {
-    st.dlg = h ? { id: h.id, name: h.name, cat: h.cat || '생활', days: [...(h.days || [])], focus: true } : { id: null, name: '', cat: '건강관리', days: [], focus: true };
+    st.dlg = h ? { id: h.id, name: h.name, cat: h.cat || '생활', days: [...(h.days || [])], focus: true } : { id: null, name: '', cat: '건강관리', days: [0, 1, 2, 3, 4, 5, 6], focus: true };
     paint();
   };
 
@@ -253,7 +253,6 @@ export async function renderHabit(el, ctx) {
         const i = Number(dow.dataset.dow), ds = st.dlg.days;
         st.dlg.name = el.querySelector('#h-name').value;
         st.dlg.days = (ds.includes(i) ? ds.filter((x) => x !== i) : [...ds, i]).sort((a, b) => a - b);
-        if (st.dlg.days.length === 7) st.dlg.days = [];
         paint(); return;
       }
       const dows = t.closest('[data-dows]');

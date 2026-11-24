@@ -70,7 +70,7 @@ export async function onRequestPost({ request, env }) {
   const name = typeof body.name === 'string' ? body.name.trim().slice(0, 60) : undefined;
   const cat = body.cat;
   let days = cleanDays(body.days);
-  if (days?.length === 7) days = [];
+  if (days && !days.length) days = [0, 1, 2, 3, 4, 5, 6]; // 비우면 매일 = 7일 모두 채워 저장
   if (cat !== undefined && !CATS.includes(cat)) return json({ error: 'bad_request' }, 400);
 
   try {
@@ -86,7 +86,7 @@ export async function onRequestPost({ request, env }) {
           '사용': { checkbox: true },
           '순서': { number: nextOrder },
           '시작일': { date: { start: kstToday() } },
-          '요일': daysProp(days || []),
+          '요일': daysProp(days || [0, 1, 2, 3, 4, 5, 6]),
         },
       });
       return json({ ok: true, habit: toHabit(page) });
