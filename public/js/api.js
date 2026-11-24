@@ -54,3 +54,14 @@ export async function getHabits(month) {
   }
 }
 export const habitAction = (body) => post('/api/habits', body);
+
+export async function getQt(date) {
+  try {
+    const res = await fetch(`/api/qt?date=${date}`, { credentials: 'same-origin' });
+    const data = await res.json().catch(() => ({}));
+    return res.ok ? data : { configured: true, error: data.error || `http_${res.status}`, entry: null, week: {} };
+  } catch {
+    return { configured: true, error: 'offline', entry: null, week: {} };
+  }
+}
+export const saveQt = (date, med, pray) => post('/api/qt', { date, med, pray });

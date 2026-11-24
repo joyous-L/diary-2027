@@ -318,3 +318,39 @@ body[data-mode="single"] .dlg textarea { font-size: 17px; }
 .hs-row .hl-name { flex-direction: row; align-items: baseline; gap: 8px; }
 .sw-head .go-now { font-size: 11px; }
 body[data-mode="single"] .dlg.hdlg { height: auto; min-height: 100%; }
+
+/* ── 큐티 ── */
+.qt { height: 100%; padding: 40px 44px 30px 48px; display: flex; flex-direction: column; gap: 18px; }
+.qt.qt-r { padding: 40px 48px 30px 44px; overflow-y: auto; scrollbar-width: thin; }
+.qt-top { min-height: 59px; display: flex; align-items: flex-end; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 12px; flex: none; }
+.qt-top .d { display: flex; align-items: baseline; gap: 10px; }
+.qt-top .go-now { margin-left: 4px; }
+.qt-h { font-family: var(--head); font-size: 20px; color: var(--accent); }
+.qt-sh { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.qt-sh .muted { font-size: 14px; }
+.qt-title { font-family: var(--head); font-size: 16px; }
+.qt-word { display: flex; flex-direction: column; gap: 10px; flex: none; max-height: 56%; min-height: 0; }
+.qt-verses { overflow-y: auto; scrollbar-width: thin; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+.qt-verses p { margin: 0; display: flex; gap: 10px; font-size: 15px; line-height: 1.7; }
+.qt-verses .vn { flex: none; width: 18px; text-align: right; font-size: 11px; color: var(--accent); padding-top: 4px; }
+.qt-empty { font-size: 14px; line-height: 1.7; }
+.qt-ex { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; border-top: 1px dashed #CFC8BA; padding-top: 16px; }
+.qt-note { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; border-radius: 8px; background: var(--paper-2); padding: 14px 18px; font-size: 14px; line-height: 1.75; white-space: pre-line; }
+.qt-week { display: flex; align-items: center; gap: 5px; }
+.qt-week .dot { width: 9px; height: 9px; border-radius: 50%; border: 1px solid var(--line); display: block; }
+.qt-week .dot.word { border-color: var(--accent); }
+.qt-week .dot.done { background: var(--accent); border-color: var(--accent); }
+.qt-week .dot.cur { outline: 2px solid rgba(62, 92, 74, 0.25); outline-offset: 1px; }
+.qt-week small { font-size: 11px; color: var(--muted); margin-left: 4px; }
+.qt-field { display: flex; flex-direction: column; gap: 4px; flex: none; }
+.qt-field textarea { border: 0; background-color: transparent; resize: none; overflow: hidden; font-family: var(--body); font-size: 15px; color: var(--ink); padding: 0; outline: none; min-height: 68px; }
+.qt-field textarea::placeholder { color: var(--hint); }
+.qt-foot { margin-top: auto; }
+.qs-body { flex: 1; padding: 18px 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+.qs-body .qt-word { max-height: none; }
+.qs-body .qt-verses p { font-size: 16px; }
+.qs-body .qt-field textarea { font-size: 16px; }
+.qs-note { border-radius: 10px; background: var(--paper-2); padding: 4px 16px; }
+.qs-tg { all: unset; cursor: pointer; width: 100%; min-height: 48px; display: flex; align-items: center; justify-content: space-between; }
+.qs-tg .muted { font-size: 13px; }
+.qs-note .qt-note { padding: 0 0 16px; background: none; overflow: visible; }
