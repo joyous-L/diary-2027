@@ -2,6 +2,7 @@
 import { renderCover } from './views/cover.js';
 import { renderMonth } from './views/month.js';
 import { renderWeek } from './views/week.js';
+import { renderHabit } from './views/habit.js';
 import { renderSoon, renderMore } from './views/soon.js';
 
 const SPREAD_MIN_WIDTH = 900;   // 이보다 좁으면 한 면 보기
@@ -22,7 +23,7 @@ const BOTTOM = [
 const MORE_GROUP = new Set(['more', 'habit', 'notes', 'health']);
 const READING_GROUP = new Set(['books', 'marks']);
 
-const VIEWS = { cover: renderCover, month: renderMonth, week: renderWeek, more: renderMore };
+const VIEWS = { cover: renderCover, month: renderMonth, week: renderWeek, habit: renderHabit, more: renderMore };
 
 export function go(name, arg) {
   location.hash = `#/${name}${arg ? `/${arg}` : ''}`;

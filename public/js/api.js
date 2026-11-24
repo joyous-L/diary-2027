@@ -43,3 +43,14 @@ async function post(path, body) {
 
 export const saveDiary = (date, thanks, text) => post('/api/diary', { date, thanks, text });
 export const setHabit = (habitId, name, date, on) => post('/api/habit', { habitId, name, date, on });
+
+export async function getHabits(month) {
+  try {
+    const res = await fetch(`/api/habits?month=${month}`, { credentials: 'same-origin' });
+    const data = await res.json().catch(() => ({}));
+    return res.ok ? data : { configured: true, error: data.error || `http_${res.status}`, habits: [], checks: {} };
+  } catch {
+    return { configured: true, error: 'offline', habits: [], checks: {} };
+  }
+}
+export const habitAction = (body) => post('/api/habits', body);
