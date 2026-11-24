@@ -21,6 +21,12 @@ function mondayOf(key) {
 
 const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
 
+// 굵은 글씨는 \u0001…\u0002 표시로 감싸서 보냄 (화면에서 <b>로 바꿈)
+const marked = (rich = []) => rich.map((r) => {
+  const t = r.plain_text || '';
+  return r.annotations?.bold && t.trim() ? `\u0001${t}\u0002` : t;
+}).join('');
+
 function parseBody(blocks) {
   const verses = [], note = [];
   let sec = blocks.some((b) => b.type.startsWith('heading')) ? null : 'word';
@@ -37,7 +43,7 @@ function parseBody(blocks) {
         else verses.push({ n: '', t: line.trim() });
       }
     } else if (sec === 'note') {
-      note.push(b.text);
+      note.push(marked(b.rich));
     }
   }
   return { verses, note: note.join('\n\n').replace(/^\n+|\n+$/g, '') };

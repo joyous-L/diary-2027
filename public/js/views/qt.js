@@ -39,7 +39,7 @@ function versesHtml(st) {
 
 function noteHtml(st) {
   const t = st.entry?.note;
-  return t ? `<div class="qt-note">${esc(t)}</div>` : '<div class="qt-note muted">해설이 없어요</div>';
+  return t ? `<div class="qt-note">${esc(t).replace(/\u0001([\s\S]*?)\u0002/g, '<b>$1</b>').replace(/[\u0001\u0002]/g, '')}</div>` : '<div class="qt-note muted">해설이 없어요</div>';
 }
 
 function weekDots(st) {
