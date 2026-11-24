@@ -3,7 +3,7 @@
 // POST /api/qt { date, med, pray } → 묵상·기도 저장 (그날 카드가 없으면 새로 만듦)
 //
 // 본문 형식 (큐티 스킬이 올리는 방식):
-//   ## 성경말씀  → 아래 문단 한 줄 = 한 절 ("1 태초에 …", 앞 숫자 = 절 번호)
+//   ## 성경말씀  → 아래 문단 한 줄 = 한 절 ("¹ 태초에 …" 또는 "1 태초에 …", 앞 숫자 = 절 번호)
 //   ## 해설      → 아래 문단들 = 해설 원문
 //   제목 블록이 없으면 본문 전체를 말씀으로 봄
 import { DB, notion, queryAll, readBlocks, richText, plain, json, DATE_RE, addDays, NotionError } from '../../lib/notion.js';
@@ -19,6 +19,8 @@ function mondayOf(key) {
   return addDays(key, -dow);
 }
 
+const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+
 function parseBody(blocks) {
   const verses = [], note = [];
   let sec = blocks.some((b) => b.type.startsWith('heading')) ? null : 'word';
@@ -30,14 +32,15 @@ function parseBody(blocks) {
     if (sec === 'word') {
       for (const line of b.text.split('\n')) {
         if (!line.trim()) continue;
-        const m = /^\s*(\d{1,3})\s*[.:)]?\s+(.+)$/.exec(line);
-        verses.push(m ? { n: m[1], t: m[2] } : { n: '', t: line.trim() });
+        const m = /^\s*(?:([⁰¹²³⁴⁵⁶⁷⁸⁹]{1,3})\s*|(\d{1,3})\s*[.:)]?\s+)(.+)$/.exec(line);
+        if (m) verses.push({ n: m[1] ? [...m[1]].map((c) => SUP.indexOf(c)).join('') : m[2], t: m[3].trim() });
+        else verses.push({ n: '', t: line.trim() });
       }
     } else if (sec === 'note') {
       note.push(b.text);
     }
   }
-  return { verses, note: note.join('\n').replace(/^\n+|\n+$/g, '') };
+  return { verses, note: note.join('\n\n').replace(/^\n+|\n+$/g, '') };
 }
 
 export async function onRequestGet({ request, env }) {

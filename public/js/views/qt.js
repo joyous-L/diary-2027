@@ -34,7 +34,7 @@ function versesHtml(st) {
   const e = st.entry;
   if (!st.loaded) return '<p class="muted qt-empty">불러오는 중…</p>';
   if (!e || !e.verses?.length) return `<p class="muted qt-empty">${st.configured ? '이 날은 아직 큐티 말씀이 없어요.<br>큐티 스킬로 올리면 여기에 나와요' : '노션 연결 전이에요'}</p>`;
-  return `<div class="qt-verses">${e.verses.map((v) => `<p><span class="vn">${esc(v.n)}</span><span>${esc(v.t)}</span></p>`).join('')}</div>`;
+  return `<div class="qt-verses">${e.verses.map((v) => (v.n ? `<p><span class="vn">${esc(v.n)}</span><span>${esc(v.t)}</span></p>` : `<p class="vsub">${esc(v.t)}</p>`)).join('')}</div>`;
 }
 
 function noteHtml(st) {
