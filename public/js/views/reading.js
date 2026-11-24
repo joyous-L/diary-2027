@@ -50,7 +50,7 @@ function dialogHtml(d) {
   const title = (d.kind === 'book' ? '완독 ' : '책갈피 ') + (d.id ? '고치기' : '추가');
   return `<div class="dlg-back" data-close>
     <div class="dlg hdlg rdlg" role="dialog" aria-modal="true" aria-label="${title}">
-      <div class="dlg-h"><span class="head" style="font-size:24px">${title}</span><button type="button" class="icon-btn" data-close aria-label="닫기">✕</button></div>
+      <div class="dlg-h"><span class="head">${title}</span><button type="button" class="icon-btn" data-close aria-label="닫기">✕</button></div>
       ${body}
       <div class="hdlg-f">
         ${d.id ? `<button type="button" class="linkbtn danger" data-del>${d.confirmDel ? '한 번 더 누르면 삭제' : '지우기'}</button>` : '<span></span>'}

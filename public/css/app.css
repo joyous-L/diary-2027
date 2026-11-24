@@ -588,3 +588,20 @@ body[data-mode="single"] .nbody { overflow: visible; }
 .sw-head .dpill small, .dlg-h .dpill small { color: inherit; font-size: 13px; }
 .sw-head .dpill.lg small, .dlg-h .dpill.lg small { font-size: 16px; }
 .sw-head .dpill b { font-size: 20px; }
+
+/* 월간: 가운데 접히는 그림자 없애기 (달력이 두 면에 걸쳐 있어서) */
+.spread[data-view="month"] .page.left, .spread[data-view="month"] .page.right { box-shadow: none; }
+
+/* 제목 글자 조금 작게 */
+.rd-head .t .head, .soon .head { font-size: 26px; }
+.hl-head .t > .head { font-size: 29px; }
+.sec, .qt-h, .hc-h .head { font-size: 19px; }
+.sec.sm { font-size: 16px; }
+.hhead .sec { font-size: 16px; }
+.dpill b { font-size: 15px; }
+.dpill.lg b { font-size: 22px; }
+.dpill.lg small { font-size: 14px; }
+.wday-h .dpill b { font-size: 15px; }
+.dlg-h .head { font-size: 22px !important; }
+.ntitle { font-size: 23px; }
+.ty-sum .head { font-size: 21px; }

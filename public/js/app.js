@@ -76,7 +76,7 @@ async function render() {
     root.innerHTML = '<div class="desk cover-desk"><div id="view"></div></div>';
   } else if (mode === 'spread') {
     root.innerHTML = `<div class="desk"><div class="book-wrap" id="bookwrap"><div class="book" id="book">
-      <a class="to-cover" href="#/cover">← 표지</a><div id="view" class="spread"></div>${tabsHtml(name)}</div></div></div>`;
+      <a class="to-cover" href="#/cover">← 표지</a><div id="view" class="spread" data-view="${name}"></div>${tabsHtml(name)}</div></div></div>`;
     fitBook();
   } else {
     root.innerHTML = `<div class="phone"><div id="view" class="single"></div>${bottomHtml(name)}</div>`;

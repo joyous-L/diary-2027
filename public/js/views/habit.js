@@ -181,7 +181,7 @@ function dialogHtml(st) {
   const cats = CATS.map((k) => `<button type="button" class="catbtn" data-cat="${k}" aria-pressed="${d.cat === k}" style="${d.cat === k ? `background:${CAT_COLOR[k]};color:var(--paper);border-color:${CAT_COLOR[k]}` : ''}"><i style="background:${d.cat === k ? 'var(--paper)' : CAT_COLOR[k]}"></i>${k}</button>`).join('');
   return `<div class="dlg-back" data-close>
     <div class="dlg hdlg" role="dialog" aria-modal="true" aria-label="${d.id ? '습관 고치기' : '습관 추가'}">
-      <div class="dlg-h"><span class="head" style="font-size:24px">${d.id ? '습관 고치기' : '습관 추가'}</span><button type="button" class="icon-btn" data-close aria-label="닫기">✕</button></div>
+      <div class="dlg-h"><span class="head">${d.id ? '습관 고치기' : '습관 추가'}</span><button type="button" class="icon-btn" data-close aria-label="닫기">✕</button></div>
       <label class="hf"><span>이름</span><input id="h-name" maxlength="60" placeholder="예: 탄천 걷기" value="${esc(d.name)}" autocomplete="off"></label>
       <div class="hf"><span>분류</span><div class="cats">${cats}</div></div>
       <div class="hdlg-f">

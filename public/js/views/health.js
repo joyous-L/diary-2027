@@ -109,7 +109,7 @@ function visitDialog(st) {
   if (!d) return '';
   return `<div class="dlg-back" data-close>
     <div class="dlg hdlg rdlg" role="dialog" aria-modal="true" aria-label="진료기록">
-      <div class="dlg-h"><span class="head" style="font-size:24px">진료기록 ${d.id ? '고치기' : '추가'}</span><button type="button" class="icon-btn" data-close aria-label="닫기">✕</button></div>
+      <div class="dlg-h"><span class="head">진료기록 ${d.id ? '고치기' : '추가'}</span><button type="button" class="icon-btn" data-close aria-label="닫기">✕</button></div>
       <div class="hrow2"><label class="hf"><span>날짜</span><input id="v-date" type="date" value="${esc(d.date)}"></label><label class="hf"><span>병원</span><input id="v-place" maxlength="200" value="${esc(d.place)}" placeholder="예: 정형외과" autocomplete="off"></label></div>
       <label class="hf"><span>사유</span><input id="v-why" maxlength="2000" value="${esc(d.why)}" placeholder="왜 갔는지" autocomplete="off"></label>
       <label class="hf"><span>경과</span><input id="v-result" maxlength="2000" value="${esc(d.result)}" placeholder="결과 · 처방 · 다음에 할 것" autocomplete="off"></label>
