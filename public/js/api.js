@@ -79,3 +79,5 @@ export const getBooks = () => getJson('/api/books', { books: [] });
 export const bookAction = (body) => post('/api/books', body);
 export const getMarks = () => getJson('/api/marks', { marks: [] });
 export const markAction = (body) => post('/api/marks', body);
+export const getHealth = (year) => getJson(`/api/health?year=${year}`, { conditions: [], visits: [], tags: [] });
+export const healthAction = (body) => post('/api/health', body);
