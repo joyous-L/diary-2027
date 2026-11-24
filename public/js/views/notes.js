@@ -74,9 +74,11 @@ function editorHtml(st, single) {
       <input type="date" id="n-date" value="${esc(n.date)}" aria-label="날짜"></div>
     <div class="nsubs ntags">${tagBtns}</div>
     <input id="n-title" class="ntitle head" maxlength="300" placeholder="제목" value="${esc(n.title)}" autocomplete="off">
-    <textarea id="n-text" class="ruled ntext" placeholder="내용을 적어 보세요">${esc(n.text || '')}</textarea>
+    <div class="nbody">
+    <textarea id="n-text" class="ruled ntext" rows="1" placeholder="내용을 적어 보세요">${esc(n.text || '')}</textarea>
     <div class="nimgs">${imgs}
       <label class="nimg-add${n.uploading ? ' busy' : ''}">${n.uploading ? '올리는 중…' : `${PLUS}<span>사진</span>`}<input type="file" id="n-file" accept="image/*" multiple hidden${n.uploading ? ' disabled' : ''}></label></div>
+    </div>
     <div class="nfoot"><span id="n-status" class="notice">${esc(st.status || '쓰면 자동으로 저장돼요 · 사진은 노션에 바로 올라가요')}</span>
       ${n.id ? `<button type="button" class="linkbtn danger" data-delnote>${n.confirmDel ? '한 번 더 누르면 삭제' : '노트 지우기'}</button>` : ''}</div>
   </div>`;
@@ -125,7 +127,8 @@ export async function renderNotes(el, ctx) {
     setStatus('입력 중…');
   };
 
-  function grow(t) { t.style.height = 'auto'; t.style.height = `${Math.max(t.scrollHeight, 204)}px`; }
+  // 쓴 만큼 + 한 줄만 줄이 보이게 (최소 3줄)
+  function grow(t) { t.style.height = 'auto'; t.style.height = `${Math.max(Math.ceil(t.scrollHeight / 34) * 34 + 34, 102)}px`; }
 
   function bind() {
     const n = st.open;
@@ -148,7 +151,7 @@ export async function renderNotes(el, ctx) {
     }
     const title = el.querySelector('#n-title'), text = el.querySelector('#n-text'), date = el.querySelector('#n-date'), file = el.querySelector('#n-file');
     if (title) title.oninput = () => { n.title = title.value; schedule(); };
-    if (text) { if (single) grow(text); text.oninput = () => { n.text = text.value; if (single) grow(text); schedule(); }; }
+    if (text) { grow(text); text.oninput = () => { n.text = text.value; grow(text); schedule(); }; }
     if (date) date.onchange = () => { n.date = date.value; schedule(0); };
     if (file) file.onchange = async () => {
       const files = [...file.files];

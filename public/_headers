@@ -1,0 +1,9 @@
+# 앱을 고치면 바로 보이도록: 화면 파일은 매번 새로 확인 (바뀌지 않았으면 그대로 씀)
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/js/*
+  Cache-Control: no-cache
+/css/*
+  Cache-Control: no-cache
