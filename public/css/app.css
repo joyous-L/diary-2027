@@ -227,3 +227,9 @@ button { font: inherit; color: inherit; }
 body[data-mode="single"] .dlg-back { position: fixed; background: var(--paper); border-radius: 0; align-items: stretch; }
 body[data-mode="single"] .dlg { width: 100%; max-width: 640px; height: 100%; height: 100dvh; margin: 0 auto; border-radius: 0; box-shadow: none; padding: calc(12px + env(safe-area-inset-top)) 20px calc(16px + env(safe-area-inset-bottom)); }
 body[data-mode="single"] .dlg textarea { font-size: 17px; }
+
+/* 오늘로 돌아가기 */
+.go-now { color: var(--accent); text-decoration: none; font-size: 12px; cursor: pointer; }
+.go-now:hover { text-decoration: underline; }
+.whab-h .go-now.head { font-size: 15px; }
+.m-side .go-now { display: inline-block; margin-top: 8px; }

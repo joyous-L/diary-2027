@@ -69,13 +69,15 @@ function statusText(st) {
   return parts.join(' · ');
 }
 
+const isThisWeek = (st) => st.start === weekStartOf(st.today);
+
 function spreadHtml(st) {
   const t = weekTitle(st.start);
   const prev = addDaysKey(st.start, -7), next = addDaysKey(st.start, 7);
   const first = `<section class="wcell whab">
     <header class="whab-h">
       <a class="icon-btn" href="#/week/${prev}" aria-label="지난주">${ARROW_L}</a>
-      <span class="ttl"><small>${t.y} · ${t.label}</small><span class="head">이번 주</span></span>
+      <span class="ttl"><small>${t.y} · ${t.label}</small>${isThisWeek(st) ? '<span class="head">이번 주</span>' : '<a class="head go-now" href="#/week" title="오늘이 있는 주로 가기">이번 주로 ↩</a>'}</span>
       <a class="icon-btn" href="#/week/${next}" aria-label="다음 주">${ARROW_R}</a>
     </header>
     <div class="hhead"><span>습관</span><span class="hdots">${DOW_KO.map((d, i) => `<span${i === 6 ? ' style="color:var(--red)"' : ''}>${d}</span>`).join('')}</span></div>
@@ -103,7 +105,7 @@ function singleHtml(st) {
   return `
   <header class="sw-head">
     <a class="icon-btn" href="#/week/${prev}" aria-label="지난주">${ARROW_L}</a>
-    <span class="ttl"><small>${t.y} · ${st.days[0].label} – ${st.days[6].label}</small><span class="head">${t.label}</span></span>
+    <span class="ttl"><small>${t.y} · ${st.days[0].label} – ${st.days[6].label}</small><span class="head">${t.label}</span>${isThisWeek(st) ? '' : '<a class="go-now" href="#/week">이번 주로 ↩</a>'}</span>
     <a class="icon-btn" href="#/week/${next}" aria-label="다음 주">${ARROW_R}</a>
   </header>
   <div class="sw-chips" role="tablist" aria-label="요일 선택">${chips}</div>

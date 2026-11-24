@@ -58,6 +58,7 @@ function spreadHtml(y, m, weeks, byDate, status) {
           <a class="icon-btn" href="#/month/${ym(prev.y, prev.m)}" aria-label="지난달">${ARROW_L}</a>
           <a class="icon-btn" href="#/month/${ym(next.y, next.m)}" aria-label="다음 달">${ARROW_R}</a>
         </div>
+        ${today.startsWith(ym(y, m)) ? '' : '<a class="go-now" href="#/month">이번 달로 ↩</a>'}
       </div>
       <div>${miniHtml(prev.y, prev.m)}${miniHtml(next.y, next.m)}</div>
     </aside>
@@ -101,7 +102,7 @@ function singleHtml(y, m, weeks, byDate, status) {
   <div class="sm-head">
     <div style="display:flex;align-items:flex-end;gap:12px">
       <span class="num">${String(m).padStart(2, '0')}</span>
-      <span class="sub"><span class="head muted" style="font-size:15px">${y}</span><span class="head" style="font-size:14px;letter-spacing:2px;color:var(--accent)">${MONTH_EN[m - 1]}</span></span>
+      <span class="sub"><span class="head muted" style="font-size:15px">${y}</span><span class="head" style="font-size:14px;letter-spacing:2px;color:var(--accent)">${MONTH_EN[m - 1]}</span>${todayKey().startsWith(ym(y, m)) ? '' : '<a class="go-now" href="#/month">이번 달로 ↩</a>'}</span>
     </div>
     <div>
       <a class="icon-btn" href="#/month/${ym(prev.y, prev.m)}" aria-label="지난달">${ARROW_L}</a>
