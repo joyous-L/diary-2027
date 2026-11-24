@@ -5,9 +5,13 @@ import { getNotes, getNote, noteAction, uploadNoteImage, deleteNoteImage } from 
 
 const PLUS = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M7 2v10M2 7h10"/></svg>';
 const BACK = '<svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>';
-const CAT_COLOR = { '경제': '#4A6A8A', '아이디어': '#A07A3A', '메모': '#8A867D' };
-const CATS = Object.keys(CAT_COLOR);
-const ECON_TAGS = ['주식', '차트', '뉴스', '용어'];
+// 노션 색 이름 → 다이어리 색
+const NCOLOR = { default: '#8A867D', gray: '#8A867D', brown: '#8B6B4E', orange: '#C07A3E', yellow: '#A07A3A', green: '#3E7A57', blue: '#4A6A8A', purple: '#7A5E8E', pink: '#A0566A', red: '#B0463C' };
+let opts = { cats: [{ name: '경제', color: 'blue' }, { name: '아이디어', color: 'yellow' }, { name: '메모', color: 'gray' }], tags: [] };
+const catColor = (name) => NCOLOR[opts.cats.find((c) => c.name === name)?.color] || (name ? NCOLOR.default : '#C4BEB1');
+const tagColor = (name) => NCOLOR[opts.tags.find((c) => c.name === name)?.color] || NCOLOR.default;
+function setOpts(o) { if (o?.cats) opts = { cats: o.cats, tags: o.tags || [] }; }
+function addOpt(kind, name) { if (!opts[kind].some((o) => o.name === name)) opts[kind].push({ name, color: 'default' }); }
 const ERR = { offline: '인터넷 연결을 확인해 주세요', notion_not_shared: '노션 연결을 확인해 주세요', not_configured: '노션 연결 전이에요', too_big: '사진이 너무 커요', bad_type: '이 사진 형식은 못 올려요', upload_failed: '사진을 올리지 못했어요' };
 const errText = (e) => (e ? ERR[e] || '저장하지 못했어요' : '');
 const md = (k) => (k ? `${Number(k.slice(5, 7))}.${Number(k.slice(8, 10))}` : '');
@@ -42,12 +46,15 @@ async function flushSave() {
 }
 
 function listHtml(st) {
-  const list = st.notes.filter((n) => (filter.cat === '전체' || n.cat === filter.cat) && (!filter.tag || n.tags.includes(filter.tag)));
-  const chips = ['전체', ...CATS].map((c) => `<button type="button" class="ncat" data-cat="${c}" aria-pressed="${filter.cat === c}"><i style="background:${c === '전체' ? (filter.cat === c ? 'var(--paper)' : '#8A867D') : CAT_COLOR[c]}"></i>${c}</button>`).join('');
-  const subs = filter.cat === '경제' ? `<div class="nsubs">${ECON_TAGS.map((t) => `<button type="button" class="nsub" data-ftag="${t}" aria-pressed="${filter.tag === t}">#${t}</button>`).join('')}</div>` : '';
+  const inCat = st.notes.filter((n) => filter.cat === '전체' || n.cat === filter.cat);
+  const list = inCat.filter((n) => !filter.tag || n.tags.includes(filter.tag));
+  const chips = ['전체', ...opts.cats.map((c) => c.name)].map((c) => `<button type="button" class="ncat" data-cat="${esc(c)}" aria-pressed="${filter.cat === c}"><i style="background:${c === '전체' ? (filter.cat === c ? 'var(--paper)' : '#8A867D') : catColor(c)}"></i>${esc(c)}</button>`).join('');
+  // 지금 보이는 노트에 쓰인 태그만 거르기 칩으로
+  const used = opts.tags.map((t) => t.name).filter((t) => inCat.some((n) => n.tags.includes(t)));
+  const subs = used.length ? `<div class="nsubs">${used.map((t) => `<button type="button" class="nsub" data-ftag="${esc(t)}" aria-pressed="${filter.tag === t}">#${esc(t)}</button>`).join('')}</div>` : '';
   const rows = list.map((n) => `<a class="nrow${n.id === st.open?.id ? ' on' : ''}" href="#/notes/${n.id}">
-      <span class="t"><i style="background:${CAT_COLOR[n.cat] || '#C4BEB1'}"></i><b>${esc(n.title || '제목 없음')}</b><small>${md(n.date)}</small></span>
-      ${n.tags.length ? `<span class="tg-s" style="color:${CAT_COLOR[n.cat] || 'var(--muted)'}">${n.tags.map((t) => `#${esc(t)}`).join(' ')}</span>` : ''}</a>`).join('');
+      <span class="t"><i style="background:${catColor(n.cat)}"></i><b>${esc(n.title || '제목 없음')}</b><small>${md(n.date)}</small></span>
+      ${n.tags.length ? `<span class="tg-s">${n.tags.map((t) => `<span style="color:${tagColor(t)}">#${esc(t)}</span>`).join(' ')}</span>` : ''}</a>`).join('');
   const empty = !st.loaded ? '불러오는 중…' : !st.configured ? '노션 연결 전이에요' : st.notes.length ? '이 분류에는 노트가 없어요' : '아직 노트가 없어요. 새 노트로 시작해 보세요';
   return `<div class="ncats">${chips}</div>${subs}${st.error ? `<p class="hl-status">${esc(errText(st.error))}</p>` : ''}
     <div class="nlist">${rows || `<p class="muted hl-empty">${empty}</p>`}</div>`;
@@ -57,12 +64,15 @@ function editorHtml(st, single) {
   const n = st.open;
   if (!n) return `<div class="nempty muted">${st.loaded && st.notes.length ? '왼쪽에서 노트를 고르거나 새 노트를 만들어요' : '새 노트를 눌러 시작해요'}</div>`;
   if (n.loading) return '<div class="nempty muted">불러오는 중…</div>';
-  const catBtns = CATS.map((c) => `<button type="button" class="ncat sm" data-ecat="${c}" aria-pressed="${n.cat === c}"${n.cat === c ? ` style="background:${CAT_COLOR[c]};color:var(--paper)"` : ''}><i style="background:${n.cat === c ? 'var(--paper)' : CAT_COLOR[c]}"></i>${c}</button>`).join('');
-  const tagBtns = n.cat === '경제' ? ECON_TAGS.map((t) => `<button type="button" class="nsub" data-etag="${t}" aria-pressed="${n.tags.includes(t)}">#${t}</button>`).join('') : '';
+  const catBtns = opts.cats.map(({ name: c }) => `<button type="button" class="ncat sm" data-ecat="${esc(c)}" aria-pressed="${n.cat === c}"${n.cat === c ? ` style="background:${catColor(c)};color:var(--paper)"` : ''}><i style="background:${n.cat === c ? 'var(--paper)' : catColor(c)}"></i>${esc(c)}</button>`).join('')
+    + (st.adding === 'cat' ? '<input id="n-newopt" class="tg-in" maxlength="30" placeholder="새 분류" autocomplete="off">' : '<button type="button" class="tg add" data-newopt="cat" aria-label="분류 추가">+</button>');
+  const tagBtns = opts.tags.map(({ name: t }) => `<button type="button" class="nsub" data-etag="${esc(t)}" aria-pressed="${n.tags.includes(t)}"${n.tags.includes(t) ? ` style="border-color:${tagColor(t)};color:${tagColor(t)}"` : ''}>#${esc(t)}</button>`).join('')
+    + (st.adding === 'tag' ? '<input id="n-newopt" class="tg-in" maxlength="30" placeholder="새 태그" autocomplete="off">' : '<button type="button" class="tg add" data-newopt="tag" aria-label="태그 추가">+</button>');
   const imgs = (n.images || []).map((im) => `<figure class="nimg"><a href="${esc(im.url)}" target="_blank" rel="noopener"><img src="${esc(im.url)}" alt="노트 사진" loading="lazy"></a><button type="button" class="nimg-x" data-delimg="${im.id}" aria-label="사진 지우기">✕</button></figure>`).join('');
   return `<div class="nedit">
-    <div class="nmeta">${single ? `<a class="icon-btn" href="#/notes" aria-label="목록으로">${BACK}</a>` : ''}${catBtns}<span class="nsubs inl">${tagBtns}</span>
+    <div class="nmeta">${single ? `<a class="icon-btn" href="#/notes" aria-label="목록으로">${BACK}</a>` : ''}${catBtns}
       <input type="date" id="n-date" value="${esc(n.date)}" aria-label="날짜"></div>
+    <div class="nsubs ntags">${tagBtns}</div>
     <input id="n-title" class="ntitle head" maxlength="300" placeholder="제목" value="${esc(n.title)}" autocomplete="off">
     <textarea id="n-text" class="ruled ntext" placeholder="내용을 적어 보세요">${esc(n.text || '')}</textarea>
     <div class="nimgs">${imgs}
@@ -74,7 +84,7 @@ function editorHtml(st, single) {
 
 export async function renderNotes(el, ctx) {
   const arg = ctx.arg || '';
-  const st = { notes: [], open: null, loaded: false, configured: true, error: null, status: '' };
+  const st = { notes: [], open: null, loaded: false, configured: true, error: null, status: '', adding: null };
   const single = ctx.mode !== 'spread';
   const showEditor = single ? !!arg : true;
 
@@ -99,7 +109,7 @@ export async function renderNotes(el, ctx) {
     if (!n || st.configured === false) return;
     if (!n.id && !n.title.trim() && !n.text.trim()) return;
     setStatus('저장 중…');
-    const r = await noteAction({ action: 'save', id: n.id, title: n.title, cat: n.cat, tags: n.cat === '경제' ? n.tags : [], date: n.date, text: n.text });
+    const r = await noteAction({ action: 'save', id: n.id, title: n.title, cat: n.cat, tags: n.tags, date: n.date, text: n.text });
     if (!r.ok) { setStatus(`저장 안 됨 (${errText(r.error)})`); return; }
     const isNew = !n.id;
     n.id = r.note.id;
@@ -119,6 +129,23 @@ export async function renderNotes(el, ctx) {
 
   function bind() {
     const n = st.open;
+    const no = el.querySelector('#n-newopt');
+    if (no) {
+      no.focus();
+      let done = false;
+      const finish = (save) => {
+        if (done) return; done = true;
+        const v = no.value.trim().replace(/^#/, '').replace(/,/g, '').slice(0, 30);
+        const kind = st.adding; st.adding = null;
+        if (save && v) {
+          if (kind === 'cat') { addOpt('cats', v); n.cat = v; } else { addOpt('tags', v); if (!n.tags.includes(v)) n.tags = [...n.tags, v]; }
+          schedule(0);
+        }
+        paint();
+      };
+      no.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); finish(true); } if (e.key === 'Escape') finish(false); });
+      no.addEventListener('blur', () => finish(true));
+    }
     const title = el.querySelector('#n-title'), text = el.querySelector('#n-text'), date = el.querySelector('#n-date'), file = el.querySelector('#n-file');
     if (title) title.oninput = () => { n.title = title.value; schedule(); };
     if (text) { if (single) grow(text); text.oninput = () => { n.text = text.value; if (single) grow(text); schedule(); }; }
@@ -144,12 +171,15 @@ export async function renderNotes(el, ctx) {
     const t = ev.target;
     const c = t.closest('[data-cat]');
     if (c) { filter = { cat: c.dataset.cat, tag: '' }; paint(); return; }
+
     const ft = t.closest('[data-ftag]');
     if (ft) { filter.tag = filter.tag === ft.dataset.ftag ? '' : ft.dataset.ftag; paint(); return; }
     const n = st.open;
     if (!n) return;
     const ec = t.closest('[data-ecat]');
-    if (ec) { n.cat = n.cat === ec.dataset.ecat ? '' : ec.dataset.ecat; if (n.cat !== '경제') n.tags = []; paint(); schedule(0); return; }
+    if (ec) { n.cat = n.cat === ec.dataset.ecat ? '' : ec.dataset.ecat; paint(); schedule(0); return; }
+    const no = t.closest('[data-newopt]');
+    if (no) { st.adding = no.dataset.newopt; paint(); return; }
     const et = t.closest('[data-etag]');
     if (et) { const g = et.dataset.etag; n.tags = n.tags.includes(g) ? n.tags.filter((x) => x !== g) : [...n.tags, g]; paint(); schedule(0); return; }
     const di = t.closest('[data-delimg]');
@@ -179,7 +209,7 @@ export async function renderNotes(el, ctx) {
 
   // 열 노트 정하기
   if (showEditor) {
-    if (arg === 'new') st.open = { id: null, title: '', cat: filter.cat !== '전체' ? filter.cat : '메모', tags: filter.tag ? [filter.tag] : [], date: todayKey(), text: '', images: [] };
+    if (arg === 'new') st.open = { id: null, title: '', cat: filter.cat !== '전체' ? filter.cat : (opts.cats.some((c) => c.name === '메모') ? '메모' : ''), tags: filter.tag ? [filter.tag] : [], date: todayKey(), text: '', images: [] };
     else if (/^[0-9a-f]{32}$/.test(arg)) st.open = lastOpen?.id === arg ? lastOpen : { id: arg, loading: true };
   }
   paint();
@@ -190,6 +220,8 @@ export async function renderNotes(el, ctx) {
     st.open?.loading ? getNote(arg) : Promise.resolve(null),
   ]);
   if (!ctx.isCurrent()) return;
+  if (list) setOpts(list);
+  if (one) setOpts(one);
   if (list) Object.assign(st, { notes: list.notes || [], configured: list.configured !== false, error: list.error || null });
   if (one) {
     if (one.note) { st.open = { ...one.note }; lastOpen = st.open; } else { st.open = null; st.error = one.error || null; }

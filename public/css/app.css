@@ -540,3 +540,5 @@ body[data-mode="single"] .ntext { flex: none; overflow: hidden; font-size: 16px;
 body[data-mode="single"] .nimgs { max-height: none; }
 body[data-mode="single"] .nimg, body[data-mode="single"] .nimg-add { width: calc((100% - 16px) / 3); height: auto; aspect-ratio: 1; }
 body[data-mode="single"] .nlist { overflow: visible; }
+.ntags { margin-top: -4px; }
+.nmeta .tg.add, .ntags .tg.add { min-height: 30px; }
