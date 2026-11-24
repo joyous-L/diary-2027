@@ -1,6 +1,6 @@
 // 큐티: 왼쪽 = 성경말씀 + 해설(스킬이 올린 내용), 오른쪽 = 묵상·기도(직접 쓰기, 자동 저장)
 // iPhone: 한 면에 말씀 → 해설(접기/펼치기) → 묵상 → 기도
-import { todayKey, parseKey, addDaysKey, weekStartOf, monIndex, esc, HOLIDAYS, DOW_EN_LOWER, DOW_KO } from '../util.js';
+import { todayKey, parseKey, addDaysKey, weekStartOf, monIndex, esc, HOLIDAYS, DOW_EN_LOWER, DOW_KO, datePill } from '../util.js';
 import { getQt, saveQt } from '../api.js';
 
 const ARROW_L = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>';
@@ -71,12 +71,11 @@ const backHtml = (st) => (st.date === st.today ? '' : '<a class="go-now" href="#
 
 function spreadHtml(st) {
   const d = dayInfo(st.date);
-  const col = d.red ? 'var(--red)' : 'var(--ink)';
   const e = st.entry;
   return `
   <div class="page left"><div class="qt">
     <header class="qt-top">
-      <span class="d"><span class="head muted" style="font-size:15px">${d.y}</span><span class="head" style="font-size:32px;color:${col}">${d.label}</span><span class="head" style="font-size:18px;color:${col}">${d.en}</span>${backHtml(st)}</span>
+      <span class="d"><span class="head muted" style="font-size:15px">${d.y}</span>${datePill(d.label, d.en, { red: d.red, today: st.date === st.today, size: 'lg' })}${backHtml(st)}</span>
       <span>${navHtml(st)}</span>
     </header>
     <section class="qt-word">
@@ -95,12 +94,11 @@ function spreadHtml(st) {
 
 function singleHtml(st) {
   const d = dayInfo(st.date);
-  const col = d.red ? 'var(--red)' : 'var(--ink)';
   const e = st.entry;
   return `
   <header class="sw-head">
     <a class="icon-btn" href="#/qt/${addDaysKey(st.date, -1)}" aria-label="이전 날">${ARROW_L}</a>
-    <span class="ttl"><small>${d.y} · 큐티</small><span style="display:flex;align-items:baseline;gap:6px"><span class="head" style="color:${col}">${d.label}</span><span class="head" style="font-size:15px;color:${col}">${d.en}</span></span>${backHtml(st)}</span>
+    <span class="ttl"><small>${d.y} · 큐티</small>${datePill(d.label, d.en, { red: d.red, today: st.date === st.today })}${backHtml(st)}</span>
     <a class="icon-btn" href="#/qt/${addDaysKey(st.date, 1)}" aria-label="다음 날">${ARROW_R}</a>
   </header>
   <div class="qs-body">
@@ -110,7 +108,7 @@ function singleHtml(st) {
       ${versesHtml(st)}
     </section>
     ${e?.verses?.length || e?.note ? `<section class="qs-note">
-      <button type="button" class="qs-tg" data-note aria-expanded="${noteOpen}"><span class="qt-h" style="font-size:18px">해설</span><span class="muted">${noteOpen ? '접기' : '펼치기'}</span></button>
+      <button type="button" class="qs-tg" data-note aria-expanded="${noteOpen}"><span class="qt-h">해설</span><span class="muted">${noteOpen ? '접기' : '펼치기'}</span></button>
       ${noteOpen ? noteHtml(st) : ''}
     </section>` : ''}
     ${writeHtml(st)}

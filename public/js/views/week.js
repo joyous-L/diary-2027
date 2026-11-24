@@ -2,8 +2,7 @@
 import { getEvents, groupByDate, getWeek, saveDiary, setHabit } from '../api.js';
 import {
   todayKey, parseKey, addDaysKey, weekStartOf, weekTitle, monIndex, esc, eventLabel,
-  DOW_KO, DOW_EN_LOWER, HOLIDAYS, CAT_COLOR,
-} from '../util.js';
+  DOW_KO, DOW_EN_LOWER, HOLIDAYS, CAT_COLOR, datePill } from '../util.js';
 
 const ARROW_L = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>';
 const ARROW_R = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg>';
@@ -50,8 +49,7 @@ function dayCell(st, day) {
   const dia = st.diary[day.key] || {};
   const lines = Math.max(1, Math.floor((355 - 44 - 20 - evs.length * 23 - 31) / 34));
   return `<button type="button" class="wday" data-open="${day.key}" aria-label="${day.m}월 ${day.d}일 일기 열기">
-    <span class="wday-h${day.key === st.today ? ' today' : ''}"><span class="head" style="color:${day.red ? 'var(--red)' : 'var(--ink)'}">${day.label}</span>
-      <span class="head en" style="color:${day.red ? 'var(--red)' : 'var(--ink)'}">${day.en}</span>${day.hol ? `<span class="hol">${esc(day.hol)}</span>` : ''}</span>
+    <span class="wday-h">${datePill(day.label, day.en, { red: day.red, today: day.key === st.today })}${day.hol ? `<span class="hol">${esc(day.hol)}</span>` : ''}</span>
     <span class="wday-rt">${routineLines(evs)}</span>
     <span class="wday-bottom">
       <span class="thanks"><em>감사</em><span>${esc(dia.thanks || '')}</span></span>
@@ -80,7 +78,7 @@ function spreadHtml(st) {
       <span class="ttl"><small>${t.y} · ${t.label}</small>${isThisWeek(st) ? '<span class="head">이번 주</span>' : '<a class="head go-now" href="#/week" title="오늘이 있는 주로 가기">이번 주로 ↩</a>'}</span>
       <a class="icon-btn" href="#/week/${next}" aria-label="다음 주">${ARROW_R}</a>
     </header>
-    <div class="hhead"><span>습관</span><span class="hdots">${DOW_KO.map((d, i) => `<span${i === 6 ? ' style="color:var(--red)"' : ''}>${d}</span>`).join('')}</span></div>
+    <div class="hhead"><span class="sec">습관</span><span class="hdots">${DOW_KO.map((d, i) => `<span${i === 6 ? ' style="color:var(--red)"' : ''}>${d}</span>`).join('')}</span></div>
     ${habitBlock(st)}
   </section>`;
   const cells = st.days.map((d) => dayCell(st, d));
@@ -111,8 +109,7 @@ function singleHtml(st) {
   <div class="sw-chips" role="tablist" aria-label="요일 선택">${chips}</div>
   <div class="sw-body">
     <section class="sw-day">
-      <div class="sw-dh"><span class="head" style="font-size:24px;color:${day.red ? 'var(--red)' : 'var(--ink)'}">${day.label}</span>
-        <span class="head" style="font-size:16px;color:${day.red ? 'var(--red)' : 'var(--ink)'}">${day.en}</span>${day.hol ? `<span class="hol">${esc(day.hol)}</span>` : ''}</div>
+      <div class="sw-dh">${datePill(day.label, day.en, { red: day.red, today: day.key === st.today, size: 'lg' })}${day.hol ? `<span class="hol">${esc(day.hol)}</span>` : ''}</div>
       <div class="sw-rt">${routineLines(evs) || '<span class="muted" style="font-size:14px">루틴 기록 없음</span>'}</div>
       <button type="button" class="sw-open" data-open="${st.sel}">
         <span class="thanks"><em>감사</em><span style="color:${dia.thanks ? 'var(--ink)' : 'var(--hint)'}">${esc(dia.thanks || '한 줄 남기기')}</span></span>
@@ -121,7 +118,7 @@ function singleHtml(st) {
       </button>
     </section>
     <section class="sw-hab">
-      <div class="hhead"><span class="head" style="font-size:17px;color:var(--ink)">이번 주 습관</span><span class="hdots">${DOW_KO.map((d, i) => `<span${i === 6 ? ' style="color:var(--red)"' : ''}>${d}</span>`).join('')}</span></div>
+      <div class="hhead"><span class="sec">이번 주 습관</span><span class="hdots">${DOW_KO.map((d, i) => `<span${i === 6 ? ' style="color:var(--red)"' : ''}>${d}</span>`).join('')}</span></div>
       ${habitBlock(st, true)}
     </section>
     <p class="notice" style="padding:0 4px">${esc(statusText(st))}</p>
@@ -136,7 +133,7 @@ function diaryHtml(st, key) {
   return `<div class="dlg-back" data-close="1">
     <div class="dlg" role="dialog" aria-modal="true" aria-label="${day.m}월 ${day.d}일 일기">
       <header class="dlg-h">
-        <span class="d"><small>${day.y}</small><span class="head" style="color:${day.red ? 'var(--red)' : 'var(--ink)'}">${day.label}</span><span class="head en" style="color:${day.red ? 'var(--red)' : 'var(--ink)'}">${day.en}</span></span>
+        <span class="d"><small>${day.y}</small>${datePill(day.label, day.en, { red: day.red, today: day.key === st.today, size: 'lg' })}</span>
         <span>
           <button type="button" class="icon-btn" data-move="-1" aria-label="이전 날" ${idx <= 0 ? 'disabled' : ''}>${ARROW_L}</button>
           <button type="button" class="icon-btn" data-move="1" aria-label="다음 날" ${idx >= 6 ? 'disabled' : ''}>${ARROW_R}</button>

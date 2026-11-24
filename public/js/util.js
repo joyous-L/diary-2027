@@ -79,3 +79,9 @@ export function weekTitle(startKey) {
 }
 export const DOW_EN_LOWER = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 export const CAT_COLOR = { '자기계발': '#4A6A8A', '건강관리': '#3E5C4A', '생활': '#A07A3A', '마음': '#A0566A' };
+
+// 날짜를 동그란 알약 모양으로 (오늘 = 초록으로 채움, 일요일·공휴일 = 빨강)
+export function datePill(label, en, { red = false, today = false, size = '' } = {}) {
+  const cls = ['dpill', red && 'red', today && 'today', size].filter(Boolean).join(' ');
+  return `<span class="${cls}"><b>${label}</b>${en ? `<small>${en}</small>` : ''}</span>`;
+}

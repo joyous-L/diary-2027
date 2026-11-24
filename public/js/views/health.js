@@ -1,6 +1,6 @@
 // 건강: 컨디션(하루 한 번 · 5단계 + 한 줄 + 증상) · 점 달력 · 진료기록 · 증상 모아보기
 // 경로: #/health/YYYY-MM (컨디션) · #/health/tags (증상 모아보기) · #/health/visits (iPhone 진료기록)
-import { todayKey, todayParts, ymd, ym, addMonths, daysIn, monIndex, parseKey, esc, HOLIDAYS, DOW_KO } from '../util.js';
+import { todayKey, todayParts, ymd, ym, addMonths, daysIn, monIndex, parseKey, esc, HOLIDAYS, DOW_KO, datePill } from '../util.js';
 import { getHealth, healthAction } from '../api.js';
 
 const ARROW_L = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>';
@@ -47,10 +47,11 @@ function editBox(st) {
   if (!d) return '<div class="hb-box muted" style="font-size:13px">날짜를 누르면 그날 컨디션을 남길 수 있어요</div>';
   const c = st.conds[d] || { level: '', note: '', tags: [] };
   const { y, m, d: dd } = parseKey(d);
-  const label = d === st.today ? `오늘(${md(d)}) 어때요?` : `${md(d)} (${DOW_KO[monIndex(y, m, dd)]}) 어땠어요?`;
+  const dow = monIndex(y, m, dd);
+  const label = `${datePill(md(d), DOW_KO[dow], { red: dow === 6 || !!HOLIDAYS[d], today: d === st.today })}<span class="sec sm">${d === st.today ? '오늘 어때요?' : '어땠어요?'}</span>`;
   const tags = [...new Set([...BASE_TAGS, ...st.tags, ...c.tags])];
   return `<div class="hb-box">
-    <div class="hb-top"><span>${label}</span>${st.conds[d] ? '<button type="button" class="linkbtn" data-clear>지우기</button>' : ''}</div>
+    <div class="hb-top"><span class="hb-q">${label}</span>${st.conds[d] ? '<button type="button" class="linkbtn" data-clear>지우기</button>' : ''}</div>
     <div class="hb-lv" role="radiogroup" aria-label="컨디션">${LV.map((l) => `<button type="button" role="radio" aria-checked="${c.level === l.name}" data-level="${l.name}"><i style="background:${l.color}"></i>${l.name}</button>`).join('')}</div>
     <label class="hb-note"><span>한 줄</span><input id="h-note" maxlength="1000" value="${esc(c.note)}" placeholder="몸 상태를 짧게 (예: 목이 칼칼함)" autocomplete="off"></label>
     <div class="hb-tags"><span>증상</span>${tags.map((t) => `<button type="button" class="tg" data-tag="${esc(t)}" aria-pressed="${c.tags.includes(t)}">#${esc(t)}</button>`).join('')}

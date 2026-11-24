@@ -547,3 +547,44 @@ body[data-mode="single"] .nlist { overflow: visible; }
 .nbody .ntext { flex: none; overflow: hidden; min-height: 102px; resize: none; }
 .nbody .nimgs { max-height: none; overflow: visible; }
 body[data-mode="single"] .nbody { overflow: visible; }
+
+/* ══ 강조: 날짜 알약 + 소제목 (제목 글꼴 = IM혜민) ══ */
+.head, .sec, .qt-h, .dpill, .rd-head .t .head, .hl-head .head, .dlg-h .head, .ntitle { font-family: var(--head); }
+.dpill { display: inline-flex; align-items: baseline; gap: 6px; padding: 3px 12px 4px; border-radius: 999px; background: #E6ECE5; color: var(--accent); line-height: 1.2; white-space: nowrap; flex: none; }
+.dpill b { font-weight: normal; font-size: 17px; }
+.dpill small { font-size: 13px; opacity: 0.85; }
+.dpill.red { background: #F4E3DF; color: var(--red); }
+.dpill.today { background: var(--accent); color: var(--paper); }
+.dpill.today.red { background: var(--red); }
+.dpill.lg { padding: 5px 18px 6px; }
+.dpill.lg b { font-size: 26px; }
+.dpill.lg small { font-size: 16px; }
+/* 소제목: 조금 크게 + 앞에 초록 막대 */
+.sec, .qt-h, .hc-h .head { display: inline-flex; align-items: center; gap: 8px; font-size: 22px; color: var(--ink); }
+.sec::before, .qt-h::before, .hc-h .head::before { content: ""; width: 5px; height: 0.9em; border-radius: 3px; background: var(--accent); flex: none; }
+.sec.sm { font-size: 17px; }
+.sec.sm::before { height: 0.8em; }
+/* 주간 칸 위 날짜 */
+.wday-h { align-items: center; padding-bottom: 6px; }
+.wday-h.today { border-bottom: 1px solid var(--line); }
+.wday-h .dpill b { font-size: 16px; }
+.hhead { height: 34px; padding-top: 8px; }
+.hhead .sec { font-size: 18px; }
+/* 큐티 위쪽 */
+.qt-top .d { align-items: center; gap: 12px; }
+.qt-h { margin-bottom: 2px; }
+/* 일기 창 머리 */
+.dlg-h .d { align-items: center; gap: 10px; }
+.dlg-thanks > span, .dlg-text > span { font-family: var(--head); font-size: 15px; color: var(--accent); }
+.thanks em { font-family: var(--head); font-size: 12px; color: var(--accent); }
+/* 건강 입력 상자 */
+.hb-q { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); }
+.hb-note > span, .hb-tags > span { font-family: var(--head); font-size: 14px; color: var(--accent); }
+/* 입력 창 칸 이름 */
+.hf > span { font-family: var(--head); font-size: 14px; color: var(--accent); }
+/* iPhone 주간 선택한 날 */
+.sw-dh { align-items: center; }
+.sec.sm::before { display: none; }
+.sw-head .dpill small, .dlg-h .dpill small { color: inherit; font-size: 13px; }
+.sw-head .dpill.lg small, .dlg-h .dpill.lg small { font-size: 16px; }
+.sw-head .dpill b { font-size: 20px; }

@@ -124,7 +124,7 @@ function spreadHtml(st) {
     <span class="hl-foot">켜 둔 습관만 주간 화면 첫 칸과 오른쪽 표에 나와요 · 이름을 누르면 고칠 수 있어요</span>
   </div></div>
   <div class="page right"><div class="hl hr">
-    <header class="hl-head"><span class="head" style="font-size:22px">이달의 기록</span><small class="muted">칸을 눌러 체크</small></header>
+    <header class="hl-head"><span class="sec">이달의 기록</span><small class="muted">칸을 눌러 체크</small></header>
     ${tableHtml(st)}
     ${statusHtml(st)}
   </div></div>
