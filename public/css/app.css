@@ -605,3 +605,6 @@ body[data-mode="single"] .nbody { overflow: visible; }
 .dlg-h .head { font-size: 22px !important; }
 .ntitle { font-size: 23px; }
 .ty-sum .head { font-size: 21px; }
+.qt-top .d { align-items: baseline; gap: 10px; }
+.dlg-h .d { align-items: baseline; gap: 8px; }
+.sw-dh { align-items: baseline; }

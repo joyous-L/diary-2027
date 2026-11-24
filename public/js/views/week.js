@@ -109,7 +109,8 @@ function singleHtml(st) {
   <div class="sw-chips" role="tablist" aria-label="요일 선택">${chips}</div>
   <div class="sw-body">
     <section class="sw-day">
-      <div class="sw-dh">${datePill(day.label, day.en, { red: day.red, today: day.key === st.today, size: 'lg' })}${day.hol ? `<span class="hol">${esc(day.hol)}</span>` : ''}</div>
+      <div class="sw-dh"><span class="head" style="font-size:24px;color:${day.red ? 'var(--red)' : 'var(--ink)'}">${day.label}</span>
+        <span class="head" style="font-size:16px;color:${day.red ? 'var(--red)' : 'var(--ink)'}">${day.en}</span>${day.hol ? `<span class="hol">${esc(day.hol)}</span>` : ''}</div>
       <div class="sw-rt">${routineLines(evs) || '<span class="muted" style="font-size:14px">루틴 기록 없음</span>'}</div>
       <button type="button" class="sw-open" data-open="${st.sel}">
         <span class="thanks"><em>감사</em><span style="color:${dia.thanks ? 'var(--ink)' : 'var(--hint)'}">${esc(dia.thanks || '한 줄 남기기')}</span></span>
@@ -133,7 +134,7 @@ function diaryHtml(st, key) {
   return `<div class="dlg-back" data-close="1">
     <div class="dlg" role="dialog" aria-modal="true" aria-label="${day.m}월 ${day.d}일 일기">
       <header class="dlg-h">
-        <span class="d"><small>${day.y}</small>${datePill(day.label, day.en, { red: day.red, today: day.key === st.today, size: 'lg' })}</span>
+        <span class="d"><small>${day.y}</small><span class="head" style="color:${day.red ? 'var(--red)' : 'var(--ink)'}">${day.label}</span><span class="head en" style="color:${day.red ? 'var(--red)' : 'var(--ink)'}">${day.en}</span></span>
         <span>
           <button type="button" class="icon-btn" data-move="-1" aria-label="이전 날" ${idx <= 0 ? 'disabled' : ''}>${ARROW_L}</button>
           <button type="button" class="icon-btn" data-move="1" aria-label="다음 날" ${idx >= 6 ? 'disabled' : ''}>${ARROW_R}</button>
