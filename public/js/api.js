@@ -81,3 +81,19 @@ export const getMarks = () => getJson('/api/marks', { marks: [] });
 export const markAction = (body) => post('/api/marks', body);
 export const getHealth = (year) => getJson(`/api/health?year=${year}`, { conditions: [], visits: [], tags: [] });
 export const healthAction = (body) => post('/api/health', body);
+export const getNotes = () => getJson('/api/notes', { notes: [] });
+export const getNote = (id) => getJson(`/api/notes?id=${id}`, { note: null });
+export const noteAction = (body) => post('/api/notes', body);
+export async function uploadNoteImage(id, blob, name) {
+  const fd = new FormData();
+  fd.append('id', id);
+  fd.append('file', blob, name);
+  try {
+    const res = await fetch('/api/note-image', { method: 'POST', credentials: 'same-origin', body: fd });
+    const data = await res.json().catch(() => ({}));
+    return res.ok ? { ok: true, ...data } : { ok: false, error: data.error || `http_${res.status}`, detail: data.detail };
+  } catch {
+    return { ok: false, error: 'offline' };
+  }
+}
+export const deleteNoteImage = (blockId) => post('/api/note-image', { action: 'delete', blockId });

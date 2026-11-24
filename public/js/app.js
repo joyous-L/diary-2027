@@ -6,6 +6,7 @@ import { renderHabit } from './views/habit.js';
 import { renderQt } from './views/qt.js';
 import { renderBooks, renderMarks } from './views/reading.js';
 import { renderHealth } from './views/health.js';
+import { renderNotes } from './views/notes.js';
 import { renderSoon, renderMore } from './views/soon.js';
 
 const SPREAD_MIN_WIDTH = 900;   // 이보다 좁으면 한 면 보기
@@ -26,7 +27,7 @@ const BOTTOM = [
 const MORE_GROUP = new Set(['more', 'habit', 'notes', 'health']);
 const READING_GROUP = new Set(['books', 'marks']);
 
-const VIEWS = { cover: renderCover, month: renderMonth, week: renderWeek, habit: renderHabit, qt: renderQt, books: renderBooks, marks: renderMarks, health: renderHealth, more: renderMore };
+const VIEWS = { cover: renderCover, month: renderMonth, week: renderWeek, habit: renderHabit, qt: renderQt, books: renderBooks, marks: renderMarks, health: renderHealth, notes: renderNotes, more: renderMore };
 
 export function go(name, arg) {
   location.hash = `#/${name}${arg ? `/${arg}` : ''}`;

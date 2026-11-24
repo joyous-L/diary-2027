@@ -496,3 +496,47 @@ a.hr-row { color: inherit; text-decoration: none; }
 .seg3 { grid-template-columns: 1fr 1fr 1fr; }
 body[data-mode="single"] .hc-d { height: 44px; }
 body[data-mode="single"] .hc-d i { width: 16px; height: 16px; }
+
+/* ── 노트 ── */
+.ncats, .nsubs { display: flex; flex-wrap: wrap; gap: 6px; flex: none; }
+.nsubs.inl { display: inline-flex; }
+.ncat { all: unset; cursor: pointer; min-height: 34px; padding: 0 14px; display: inline-flex; align-items: center; gap: 6px; border-radius: 17px; font-size: 13px; background: #ECE6D9; }
+.ncat i { width: 7px; height: 7px; border-radius: 50%; display: block; }
+.ncat[aria-pressed="true"]:not([style]) { background: var(--accent); color: var(--paper); }
+.ncat.sm { min-height: 30px; padding: 0 11px; font-size: 12px; }
+.nsub { all: unset; cursor: pointer; min-height: 30px; padding: 0 11px; display: inline-flex; align-items: center; border-radius: 15px; font-size: 12px; border: 1px solid var(--line-2); color: var(--muted); box-sizing: border-box; }
+.nsub[aria-pressed="true"] { border-color: #4A6A8A; color: #4A6A8A; }
+.nlist { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; display: flex; flex-direction: column; gap: 2px; }
+.nrow { display: flex; flex-direction: column; gap: 4px; padding: 11px 14px; border-radius: 8px; color: inherit; text-decoration: none; flex: none; }
+.nrow:hover { background: rgba(62, 92, 74, 0.05); }
+.nrow.on { background: #F0EBDF; }
+.nrow .t { display: flex; align-items: center; gap: 8px; }
+.nrow .t i { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.nrow .t b { font-weight: normal; font-size: 15px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nrow .t small { font-size: 12px; color: var(--muted); flex: none; }
+.nrow .tg-s { padding-left: 15px; font-size: 12px; }
+a.pill { color: inherit; text-decoration: none; box-sizing: border-box; }
+.rd.nr { padding-right: 48px; }
+.nempty { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.nedit { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+.nmeta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; border-bottom: 1px solid var(--line); padding: 20px 0 12px; }
+.nmeta input[type="date"] { margin-left: auto; border: 0; background: transparent; font-family: var(--body); font-size: 13px; color: var(--muted); min-height: 32px; }
+.ntitle { border: 0; background: transparent; font-size: 26px; line-height: 1.3; color: var(--ink); outline: none; padding: 0; flex: none; }
+.ntitle::placeholder, .ntext::placeholder { color: var(--hint); }
+.ntext { flex: 1; min-height: 136px; border: 0; background-color: transparent; resize: none; font-family: var(--body); font-size: 15px; color: var(--ink); outline: none; padding: 0; overflow-y: auto; scrollbar-width: thin; }
+.nimgs { display: flex; flex-wrap: wrap; gap: 8px; flex: none; max-height: 190px; overflow-y: auto; }
+.nimg { position: relative; margin: 0; width: 84px; height: 84px; border-radius: 8px; overflow: hidden; background: var(--paper-2); }
+.nimg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nimg-x { all: unset; cursor: pointer; position: absolute; top: 4px; right: 4px; min-width: 22px; height: 22px; padding: 0 4px; border-radius: 11px; background: rgba(59, 58, 54, 0.6); color: #fff; font-size: 11px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
+.nimg-x.armed { background: var(--red); }
+.nimg-add { cursor: pointer; width: 84px; height: 84px; border-radius: 8px; border: 1px dashed #CFC8BA; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12px; color: var(--muted); box-sizing: border-box; }
+.nimg-add:hover { border-color: var(--accent); color: var(--accent); }
+.nimg-add.busy { cursor: default; font-size: 11px; }
+.nfoot { display: flex; justify-content: space-between; align-items: center; flex: none; min-height: 32px; }
+.nfoot .linkbtn { min-height: 32px; font-size: 12px; }
+body[data-mode="single"] .nedit { padding: calc(4px + env(safe-area-inset-top)) 18px 20px; }
+body[data-mode="single"] .nmeta { padding-top: 6px; }
+body[data-mode="single"] .ntext { flex: none; overflow: hidden; font-size: 16px; }
+body[data-mode="single"] .nimgs { max-height: none; }
+body[data-mode="single"] .nimg, body[data-mode="single"] .nimg-add { width: calc((100% - 16px) / 3); height: auto; aspect-ratio: 1; }
+body[data-mode="single"] .nlist { overflow: visible; }
