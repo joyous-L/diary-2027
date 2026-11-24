@@ -2,9 +2,13 @@
 
 2027년 1월 1일부터 쓰는 개인 다이어리 웹앱. PC와 iPhone 브라우저에서 사용하고, 기록은 노션 **[Main] 2027 Record**에 저장한다.
 
-## 지금 되는 것 (v0.1)
+주소: https://diary-2027-2j6.pages.dev (이메일 코드 로그인으로 잠김)
+
+## 지금 되는 것 (v0.2)
 - 표지 → 펼치기
 - **월간**: 02_Life 일정, 월요일 시작, 2027 공휴일(우주항공청 월력요항 기준), 이전/다음 달 미니 달력
+- **주간**: 01_Routine 일정, 이번 주 습관 체크, 감사 한 줄 + 일기 미리보기
+- **일기 창**: 요일을 누르면 열림. 쓰면 1초 뒤 노션 '하루 - 일기'에 자동 저장
 - 창 크기 자동 조절: 900px 이상은 펼친 두 면(비율대로 축소), 그보다 좁으면 한 면 보기 + 아래 탭 바
 - 나머지 탭은 '곧 만들어요' 화면
 
@@ -13,7 +17,9 @@
 |---|---|
 | `public/` | 화면 (HTML·CSS·JS, 폰트) |
 | `functions/api/calendar.js` | 구글 캘린더 일정을 읽어 주는 서버 함수 |
+| `functions/api/week.js` · `diary.js` · `habit.js` | 노션 읽기·쓰기 |
 | `lib/ics.js` | 캘린더(iCal) 해석 (반복 일정 포함) |
+| `lib/notion.js` | 노션 DB ID와 API 도우미 |
 | `test/` | 해석기 테스트 (`node test/ics.test.mjs`) |
 
 ## 처음 설정 (한 번만)
@@ -34,17 +40,18 @@ Pages 프로젝트 → 설정 → **변수 및 비밀** → 추가 (유형: **�
 | `LIFE_ICS` | 구글 캘린더 02_Life의 **iCal 형식 비공개 주소** |
 | `ROUTINE_ICS` | 구글 캘린더 01_Routine의 **iCal 형식 비공개 주소** |
 
+| `NOTION_TOKEN` | 노션 연결(Integration)의 **Internal Integration Secret** |
+
 > 비공개 주소는 구글 캘린더 설정 → 해당 캘린더 → '캘린더 통합'에 있다. 이 주소를 아는 사람은 일정을 볼 수 있으니 대화창·메모 등에 붙이지 말고 여기에만 넣는다.
 
-넣은 뒤 **다시 배포**해야 적용된다.
+넣은 뒤 **다시 배포**해야 적용된다 (Deployments → ⋯ → Retry deployment).
 
-### 4. 잠금 (Cloudflare Access — 이메일 코드 로그인)
-Cloudflare 대시보드 → Zero Trust → Access → Applications → **Add an application → Self-hosted**
-- Application domain: `diary-2027.pages.dev` (프로젝트 주소)
-- Policy: Action **Allow**, Include → **Emails** → 내 이메일
-- 로그인 방법: One-time PIN (이메일로 받은 코드)
+노션 연결 열기: 노션 **[Main] 2027 Record** 페이지 → ⋯ → **연결** → 이 토큰의 연결(Integration) 추가. 그래야 아래 DB들에 접근할 수 있다.
 
-설정 후 주소를 열면 이메일 코드를 입력해야 들어갈 수 있다.
+### 4. 잠금 (Cloudflare Access — 이메일 코드 로그인) ✅ 완료
+- Pages → Settings → **Preview access → Restrict previews**로 Access 앱 생성
+- Zero Trust → Access controls → Applications → `diary-2027 - Cloudflare Pages` → Destinations에 `diary-2027-2j6.pages.dev` 추가
+- Policy: Include **Emails** = 내 이메일 / Login: One-time PIN
 
 ## 로컬 미리보기 (선택)
 ```

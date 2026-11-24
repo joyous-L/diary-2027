@@ -62,3 +62,20 @@ export function eventLabel(e, withEnd = false) {
   if (!withEnd || e.start === e.end) return `${e.start} ${e.title}`;
   return `${e.start}~${e.end} ${e.title}`;
 }
+
+export function parseKey(key) { const [y, m, d] = key.split('-').map(Number); return { y, m, d }; }
+export function addDaysKey(key, n) {
+  const { y, m, d } = parseKey(key);
+  const t = new Date(Date.UTC(y, m - 1, d + n));
+  return ymd(t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate());
+}
+export function weekStartOf(key) { const { y, m, d } = parseKey(key); return addDaysKey(key, -monIndex(y, m, d)); }
+
+const ORD = ['첫째', '둘째', '셋째', '넷째', '다섯째'];
+// 그 주의 목요일이 속한 달 기준으로 "1월 첫째 주"
+export function weekTitle(startKey) {
+  const thu = parseKey(addDaysKey(startKey, 3));
+  return { y: thu.y, label: `${thu.m}월 ${ORD[Math.floor((thu.d - 1) / 7)]} 주` };
+}
+export const DOW_EN_LOWER = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+export const CAT_COLOR = { '자기계발': '#4A6A8A', '건강관리': '#3E5C4A', '생활': '#A07A3A', '마음': '#A0566A' };
