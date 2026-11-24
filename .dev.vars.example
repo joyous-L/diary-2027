@@ -1,0 +1,3 @@
+# 로컬 미리보기용. 이 파일을 .dev.vars로 복사해 주소를 넣으세요 (.dev.vars는 GitHub에 올라가지 않아요)
+LIFE_ICS=
+ROUTINE_ICS=
