@@ -2,7 +2,7 @@ import { todayParts, ym } from '../util.js';
 
 export function renderCover(el) {
   const t = todayParts();
-  const start = t.y < 2027 ? '2027-01' : ym(t.y, t.m);
+  const start = ym(t.y, t.m); // 지금부터 미리 써 보기: 항상 이번 달로
   el.innerHTML = `
     <div class="cover" role="img" aria-label="MY DIARY 2027 표지">
       <div class="year" aria-hidden="true"><span>20</span><span>27</span></div>
