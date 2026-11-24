@@ -614,3 +614,96 @@ body[data-mode="single"] .nbody { overflow: visible; }
 .qt-top .d { align-items: baseline; gap: 10px; }
 .dlg-h .d { align-items: baseline; gap: 8px; }
 .sw-dh { align-items: baseline; }
+
+/* ── PC(펼친 책) 화면: 본문·리스트 글자 한 단계 키움 (제목·날짜·메뉴는 그대로) ── */
+body[data-mode="spread"] .mhead { font-size: 14px; }
+body[data-mode="spread"] .mcell .ev { font-size: 13px; }
+body[data-mode="spread"] .sm-dow { font-size: 13px; }
+body[data-mode="spread"] .sm-panel .ev { font-size: 17px; }
+body[data-mode="spread"] .wday-h .en { font-size: 14px; }
+body[data-mode="spread"] .rt { font-size: 14px; }
+body[data-mode="spread"] .rt b { font-size: 13px; }
+body[data-mode="spread"] .thanks { font-size: 14px; }
+body[data-mode="spread"] .preview { font-size: 14px; }
+body[data-mode="spread"] .hname { font-size: 14px; }
+body[data-mode="spread"] .w-empty { font-size: 14px; }
+body[data-mode="spread"] .dlg-h small { font-size: 14px; }
+body[data-mode="spread"] .dlg-h .en { font-size: 17px; }
+body[data-mode="spread"] .tag { font-size: 15px; }
+body[data-mode="spread"] .tag b { font-size: 13px; }
+body[data-mode="spread"] .dlg-thanks span, body[data-mode="spread"] .dlg-text > span { font-size: 13px; }
+body[data-mode="spread"] .dlg input { font-size: 17px; }
+body[data-mode="spread"] .dlg textarea { font-size: 17px; }
+body[data-mode="spread"] .btn { font-size: 16px; }
+body[data-mode="spread"] .chip small { font-size: 13px; }
+body[data-mode="spread"] .go-now { font-size: 13px; }
+body[data-mode="spread"] .pill { font-size: 15px; }
+body[data-mode="spread"] .hl-legend { font-size: 13px; }
+body[data-mode="spread"] .hl-name .n { font-size: 17px; }
+body[data-mode="spread"] .hl-name small { font-size: 13px; }
+body[data-mode="spread"] .hl-empty { font-size: 15px; }
+body[data-mode="spread"] .hl-foot { font-size: 13px; }
+body[data-mode="spread"] .hl-status { font-size: 13px; }
+body[data-mode="spread"] .ht-name { font-size: 14px; }
+body[data-mode="spread"] .hf > span { font-size: 13px; }
+body[data-mode="spread"] .hdlg #h-name { font-size: 18px; }
+body[data-mode="spread"] .catbtn { font-size: 15px; }
+body[data-mode="spread"] .hdlg-f .msg { font-size: 13px; }
+body[data-mode="spread"] .linkbtn { font-size: 14px; }
+body[data-mode="spread"] .hchip { font-size: 15px; }
+body[data-mode="spread"] .hc-h small { font-size: 15px; }
+body[data-mode="spread"] .cc span { font-size: 14px; }
+body[data-mode="spread"] .hs-cap { font-size: 14px; }
+body[data-mode="spread"] .qt-sh .muted { font-size: 15px; }
+body[data-mode="spread"] .qt-verses p { font-size: 16px; }
+body[data-mode="spread"] .qt-empty { font-size: 15px; }
+body[data-mode="spread"] .qt-note { font-size: 15px; }
+body[data-mode="spread"] .qt-field textarea { font-size: 16px; }
+body[data-mode="spread"] .qt-verses .vsub { font-size: 15px; }
+body[data-mode="spread"] .bk-head { font-size: 13px; }
+body[data-mode="spread"] .bk-row { font-size: 14px; }
+body[data-mode="spread"] .bk-row .no { font-size: 13px; }
+body[data-mode="spread"] .bk-row .t { font-size: 15px; }
+body[data-mode="spread"] .rdlg input, body[data-mode="spread"] .rdlg textarea { font-size: 17px; }
+body[data-mode="spread"] .rdlg input[type="date"] { font-size: 16px; }
+body[data-mode="spread"] .fchip { font-size: 14px; }
+body[data-mode="spread"] .mk .tx { font-size: 17px; }
+body[data-mode="spread"] .mk .meta { font-size: 13px; }
+body[data-mode="spread"] .mk .nt { font-size: 15px; }
+body[data-mode="spread"] .mk .nt small { font-size: 13px; }
+body[data-mode="spread"] .mk-add { font-size: 15px; }
+body[data-mode="spread"] .seg a { font-size: 16px; }
+body[data-mode="spread"] .rs-cap { font-size: 14px; }
+body[data-mode="spread"] .bs-row .no { font-size: 13px; }
+body[data-mode="spread"] .bs-row .t { font-size: 18px; }
+body[data-mode="spread"] .bs-row small { font-size: 14px; }
+body[data-mode="spread"] .bs-row .p { font-size: 13px; }
+body[data-mode="spread"] .hb-top { font-size: 14px; }
+body[data-mode="spread"] .hb-top .linkbtn { font-size: 13px; }
+body[data-mode="spread"] .hb-lv button { font-size: 13px; }
+body[data-mode="spread"] .hb-note span, body[data-mode="spread"] .hb-tags > span { font-size: 13px; }
+body[data-mode="spread"] .hb-note input { font-size: 16px; }
+body[data-mode="spread"] .tg { font-size: 14px; }
+body[data-mode="spread"] .tg-in { font-size: 14px; }
+body[data-mode="spread"] .hr-row { font-size: 15px; }
+body[data-mode="spread"] .hr-row .d { font-size: 14px; }
+body[data-mode="spread"] .hr-row .lv { font-size: 13px; }
+body[data-mode="spread"] .hr-row .tg-s { font-size: 13px; }
+body[data-mode="spread"] .vbadge { font-size: 13px; }
+body[data-mode="spread"] .vt-head { font-size: 13px; }
+body[data-mode="spread"] .vt-row { font-size: 14px; }
+body[data-mode="spread"] .vt-row .d { font-size: 13px; }
+body[data-mode="spread"] .vc { font-size: 15px; }
+body[data-mode="spread"] .vc small { font-size: 13px; }
+body[data-mode="spread"] .ty-sum { font-size: 16px; }
+body[data-mode="spread"] .ncat { font-size: 14px; }
+body[data-mode="spread"] .ncat.sm { font-size: 13px; }
+body[data-mode="spread"] .nsub { font-size: 13px; }
+body[data-mode="spread"] .nrow .t b { font-size: 16px; }
+body[data-mode="spread"] .nrow .t small { font-size: 13px; }
+body[data-mode="spread"] .nrow .tg-s { font-size: 13px; }
+body[data-mode="spread"] .nempty { font-size: 15px; }
+body[data-mode="spread"] .nmeta input[type="date"] { font-size: 14px; }
+body[data-mode="spread"] .ntext { font-size: 16px; }
+body[data-mode="spread"] .nimg-add { font-size: 13px; }
+body[data-mode="spread"] .nfoot .linkbtn { font-size: 13px; }
