@@ -78,12 +78,14 @@ function spreadHtml(st) {
       <span class="d"><span class="head muted" style="font-size:15px">${d.y}</span><span class="head" style="font-size:32px;color:${d.red ? 'var(--red)' : 'var(--ink)'}">${d.label}</span><span class="head" style="font-size:18px;color:${d.red ? 'var(--red)' : 'var(--ink)'}">${d.en}</span>${backHtml(st)}</span>
       <span>${navHtml(st)}</span>
     </header>
+    <div class="qt-scroll">
     <section class="qt-word">
       <div class="qt-sh"><span class="qt-h">성경말씀</span><span class="muted">${esc(e?.range || '')}</span></div>
       ${e?.title && e.title !== st.date ? `<div class="qt-title">${esc(e.title)}</div>` : ''}
       ${versesHtml(st)}
     </section>
     ${e?.verses?.length || e?.note ? `<section class="qt-ex"><span class="qt-h">해설</span>${noteHtml(st)}</section>` : ''}
+    </div>
   </div></div>
   <div class="page right"><div class="qt qt-r">
     <header class="qt-top"><span class="muted" style="font-size:13px">묵상과 기도는 직접 써요</span>${weekDots(st)}</header>

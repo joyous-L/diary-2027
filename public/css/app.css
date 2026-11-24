@@ -355,6 +355,12 @@ body[data-mode="single"] .dlg.hdlg { height: auto; min-height: 100%; }
 .qs-tg .muted { font-size: 13px; }
 .qs-note .qt-note { padding: 0 0 16px; background: none; overflow: visible; }
 .qt-verses .vsub { font-weight: 700; font-size: 14px; padding-left: 28px; margin-top: 4px; }
+/* PC 왼쪽 면: 말씀 + 해설을 한 번에 스크롤 */
+.qt-scroll { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; display: flex; flex-direction: column; gap: 18px; padding-right: 6px; }
+.qt-scroll .qt-word { max-height: none; }
+.qt-scroll .qt-verses { overflow: visible; }
+.qt-scroll .qt-ex { flex: none; }
+.qt-scroll .qt-note { flex: none; overflow: visible; }
 
 /* ── 독서 ── */
 .rd { height: 100%; padding: 40px 40px 30px 44px; display: flex; flex-direction: column; gap: 14px; }
