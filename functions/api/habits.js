@@ -3,6 +3,7 @@
 // POST /api/habits { action: 'add', name, cat }
 //                  { action: 'update', id, name?, cat?, on? }
 //                  { action: 'delete', id }   (노션에서 휴지통으로)
+//                  { action: 'reorder', orders: [{ id, order }] }  (바뀐 것만)
 import { DB, notion, queryAll, plain, json, NotionError } from '../../lib/notion.js';
 
 const CATS = ['자기계발', '건강관리', '생활', '마음'];
@@ -90,6 +91,14 @@ export async function onRequestPost({ request, env }) {
         },
       });
       return json({ ok: true, habit: toHabit(page) });
+    }
+
+    if (body.action === 'reorder') {
+      const orders = Array.isArray(body.orders) ? body.orders.slice(0, 200) : [];
+      const ok = orders.every((o) => ID_RE.test(String(o?.id || '').replace(/-/g, '')) && Number.isInteger(o.order) && o.order > 0 && o.order < 10000);
+      if (!orders.length || !ok) return json({ error: 'bad_request' }, 400);
+      await Promise.all(orders.map((o) => notion(env, 'PATCH', `/pages/${String(o.id).replace(/-/g, '')}`, { properties: { '순서': { number: o.order } } })));
+      return json({ ok: true });
     }
 
     const id = String(body.id || '').replace(/-/g, '');

@@ -262,6 +262,12 @@ body[data-mode="single"] .dlg textarea { font-size: 17px; }
 .hl-legend i, .hchip i, .catbtn i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; }
 .hl-list { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
 .hl-row { display: flex; align-items: center; gap: 12px; min-height: 60px; border-bottom: 1px dashed var(--line-3); }
+.hl-acts { display: flex; align-items: center; gap: 8px; }
+.pill.ghost { background: none; border: 1px solid var(--line-2); color: var(--muted); }
+.pill.ghost[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+.hl-mv { display: flex; gap: 4px; flex: none; }
+.hl-mv .icon-btn:disabled { opacity: 0.25; cursor: default; }
+.hs-cap .linkbtn { float: right; }
 .hl-row .bar, .hs-row .bar { width: 4px; height: 28px; border-radius: 2px; flex: none; }
 .hl-name { all: unset; cursor: pointer; flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; padding: 6px 0; }
 .hl-name .n { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

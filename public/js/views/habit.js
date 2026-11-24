@@ -8,6 +8,14 @@ const ARROW_R = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" str
 const PLUS = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M7 2v10M2 7h10"/></svg>';
 const CATS = Object.keys(CAT_COLOR);
 const OFF = '#C4BEB1';
+const UP = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3 9 4-4 4 4"/></svg>';
+const DOWN = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3 5 4 4 4-4"/></svg>';
+
+// 순서 바꾸기 모드: ▲▼ 버튼
+function moveHtml(st, h) {
+  const i = st.habits.indexOf(h), last = st.habits.length - 1;
+  return `<span class="hl-mv"><button type="button" class="icon-btn sm" data-mv="-1" data-id="${h.id}" aria-label="${esc(h.name)} 위로"${i === 0 ? ' disabled' : ''}>${UP}</button><button type="button" class="icon-btn sm" data-mv="1" data-id="${h.id}" aria-label="${esc(h.name)} 아래로"${i === last ? ' disabled' : ''}>${DOWN}</button></span>`;
+}
 
 const ERR = {
   offline: '인터넷 연결을 확인해 주세요',
@@ -49,8 +57,8 @@ function rowHtml(st, h) {
     <button type="button" class="hl-name" data-edit="${h.id}" aria-label="${esc(h.name)} 고치기">
       <span class="n">${esc(h.name)}</span><small>${esc(h.cat)} · ${dayLabel(h.days)}${h.start ? ` · ${startLabel(h.start)}` : ''}</small>
     </button>
-    <div class="hl-prog"><div class="tr"><div style="width:${s.pct}%;background:${c}"></div></div><small>${s.done}일 / ${s.total}일 · ${s.pct}%</small></div>
-    ${switchHtml(h)}
+    ${st.sorting ? moveHtml(st, h) : `<div class="hl-prog"><div class="tr"><div style="width:${s.pct}%;background:${c}"></div></div><small>${s.done}일 / ${s.total}일 · ${s.pct}%</small></div>
+    ${switchHtml(h)}`}
   </div>`;
 }
 
@@ -107,7 +115,7 @@ function headHtml(st, single) {
   }
   return `<header class="hl-head">
     <div class="t"><span class="ym"><a class="icon-btn sm" href="#/habit/${ym(prev.y, prev.m)}" aria-label="지난달">${ARROW_L}</a>${st.y} · ${st.m}월<a class="icon-btn sm" href="#/habit/${ym(next.y, next.m)}" aria-label="다음 달">${ARROW_R}</a>${back}</span><span class="head">Habit</span></div>
-    <button type="button" class="pill" data-add>${PLUS}습관 추가</button>
+    <span class="hl-acts">${st.habits.length > 1 ? `<button type="button" class="pill ghost" data-sort aria-pressed="${!!st.sorting}">${st.sorting ? '완료' : '순서 바꾸기'}</button>` : ''}<button type="button" class="pill" data-add>${PLUS}습관 추가</button></span>
   </header>`;
 }
 
@@ -165,13 +173,13 @@ function singleHtml(st) {
     const c = color(h);
     return `<div class="hs-row${h.on ? '' : ' off'}"><span class="bar" style="background:${c}"></span>
       <button type="button" class="hl-name" data-edit="${h.id}" aria-label="${esc(h.name)} 고치기"><span class="n">${esc(h.name)}</span><small style="color:${c}">${esc(h.cat)} · ${dayLabel(h.days)} · ${stats(st, h).pct}%</small></button>
-      ${switchHtml(h, true)}</div>`;
+      ${st.sorting ? moveHtml(st, h) : switchHtml(h, true)}</div>`;
   }).join('');
   return `${headHtml(st, true)}
   <div class="hs-body">
     ${on.length ? `<div class="hchips">${chips}</div>${calHtml(st, cur)}` : ''}
     ${statusHtml(st)}
-    <section><span class="hs-cap">습관 목록 · 켜 둔 것만 주간에 나와요</span>${list || emptyHtml(st)}</section>
+    <section><span class="hs-cap">습관 목록 · 켜 둔 것만 주간에 나와요${st.habits.length > 1 ? `<button type="button" class="linkbtn" data-sort>${st.sorting ? '완료' : '순서 바꾸기'}</button>` : ''}</span>${list || emptyHtml(st)}</section>
   </div>
   ${dialogHtml(st)}`;
 }
@@ -266,6 +274,28 @@ export async function renderHabit(el, ctx) {
         if (!r.ok) { d.busy = false; d.msg = errText(r.error); paint(); return; }
         st.habits = st.habits.filter((h) => h.id !== d.id);
         st.dlg = null; paint();
+      }
+      return;
+    }
+    if (t.closest('[data-sort]')) { st.sorting = !st.sorting; paint(); return; }
+    const mv = t.closest('[data-mv]');
+    if (mv) {
+      if (mv.disabled) return;
+      const i = st.habits.findIndex((h) => h.id === mv.dataset.id), j = i + Number(mv.dataset.mv);
+      if (i < 0 || j < 0 || j >= st.habits.length) return;
+      const before = st.habits.map((h) => h.order);
+      [st.habits[i], st.habits[j]] = [st.habits[j], st.habits[i]];
+      const orders = [];
+      st.habits.forEach((h, k) => { if (h.order !== k + 1) { h.order = k + 1; orders.push({ id: h.id, order: k + 1 }); } });
+      st.error = null; paint();
+      const btn = el.querySelector(`[data-mv="${mv.dataset.mv}"][data-id="${mv.dataset.id}"]`);
+      if (btn && !btn.disabled) btn.focus();
+      if (!orders.length) return;
+      const r = await habitAction({ action: 'reorder', orders });
+      if (!r.ok) {
+        [st.habits[i], st.habits[j]] = [st.habits[j], st.habits[i]];
+        st.habits.forEach((h, k) => { h.order = before[k]; });
+        st.error = r.error; paint();
       }
       return;
     }
