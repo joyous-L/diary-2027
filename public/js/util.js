@@ -99,3 +99,17 @@ export function dayLabel(days) {
   if (s === '56') return '주말';
   return days.map((i) => DOW_KO[i]).join('·');
 }
+
+// 화면을 다시 그릴 때 스크롤 위치(칸 안 스크롤 · 창 스크롤)를 그대로 지킨다
+export function keepScroll(el, draw) {
+  const cls = (n) => (n.getAttribute('class') || '').split(' ')[0];
+  const saved = [...el.querySelectorAll('[class]')].filter((n) => n.scrollTop > 0 || n.scrollLeft > 0)
+    .map((n) => { const c = cls(n); return [c, [...el.getElementsByClassName(c)].indexOf(n), n.scrollTop, n.scrollLeft]; });
+  const x = window.scrollX, y = window.scrollY;
+  draw();
+  for (const [c, i, top, left] of saved) {
+    const n = c ? el.getElementsByClassName(c)[i] : null;
+    if (n) { n.scrollTop = top; n.scrollLeft = left; }
+  }
+  if (window.scrollX !== x || window.scrollY !== y) window.scrollTo(x, y);
+}

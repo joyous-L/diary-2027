@@ -2,7 +2,7 @@
 import { getEvents, groupByDate, getWeek, saveDiary, setHabit } from '../api.js';
 import {
   todayKey, parseKey, addDaysKey, weekStartOf, weekTitle, monIndex, esc, eventLabel,
-  DOW_KO, DOW_EN_LOWER, HOLIDAYS, CAT_COLOR, datePill, isDue } from '../util.js';
+  DOW_KO, DOW_EN_LOWER, HOLIDAYS, CAT_COLOR, datePill, isDue, keepScroll } from '../util.js';
 
 const ARROW_L = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>';
 const ARROW_R = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg>';
@@ -174,7 +174,8 @@ export async function renderWeek(el, ctx) {
 
   const paint = () => {
     st.sel = selected;
-    el.innerHTML = (ctx.mode === 'spread' ? spreadHtml(st) : singleHtml(st)) + (openDay ? diaryHtml(st, openDay) : '');
+    // 다시 그려도 스크롤 위치 유지 (습관 칸 안 스크롤 · 화면 스크롤)
+    keepScroll(el, () => { el.innerHTML = (ctx.mode === 'spread' ? spreadHtml(st) : singleHtml(st)) + (openDay ? diaryHtml(st, openDay) : ''); });
     if (openDay) bindDialog();
   };
 

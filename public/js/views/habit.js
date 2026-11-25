@@ -1,6 +1,6 @@
 // 습관: 왼쪽 = 습관 목록(추가·켜기/끄기·이름 눌러 고치기), 오른쪽 = 이달의 체크 표
 // iPhone: 칩으로 고른 습관의 한 달 달력 + 목록
-import { todayParts, todayKey, ymd, ym, addMonths, daysIn, monIndex, esc, CAT_COLOR, HOLIDAYS, DOW_KO, isDue, dayLabel } from '../util.js';
+import { todayParts, todayKey, ymd, ym, addMonths, daysIn, monIndex, esc, CAT_COLOR, HOLIDAYS, DOW_KO, isDue, dayLabel, keepScroll } from '../util.js';
 import { getHabits, habitAction, setHabit } from '../api.js';
 
 const ARROW_L = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>';
@@ -211,7 +211,7 @@ export async function renderHabit(el, ctx) {
   const paint = () => {
     const focusName = document.activeElement?.id === 'h-name';
     const pos = focusName ? document.activeElement.selectionStart : null;
-    el.innerHTML = ctx.mode === 'spread' ? spreadHtml(st) : singleHtml(st);
+    keepScroll(el, () => { el.innerHTML = ctx.mode === 'spread' ? spreadHtml(st) : singleHtml(st); });
     if (st.dlg && (focusName || st.dlg.focus)) {
       const inp = el.querySelector('#h-name');
       inp.focus();
