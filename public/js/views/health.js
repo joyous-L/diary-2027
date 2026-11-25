@@ -53,7 +53,7 @@ function editBox(st) {
   return `<div class="hb-box">
     <div class="hb-top"><span class="hb-q">${label}</span>${st.conds[d] ? '<button type="button" class="linkbtn" data-clear>지우기</button>' : ''}</div>
     <div class="hb-lv" role="radiogroup" aria-label="컨디션">${LV.map((l) => `<button type="button" role="radio" aria-checked="${c.level === l.name}" data-level="${l.name}"><i style="background:${l.color}"></i>${l.name}</button>`).join('')}</div>
-    <label class="hb-note"><span>한 줄</span><input id="h-note" maxlength="1000" value="${esc(c.note)}" placeholder="몸 상태를 짧게 (예: 목이 칼칼함)" autocomplete="off"></label>
+    <label class="hb-note"><span>한 줄</span><textarea id="h-note" maxlength="1000" rows="1" placeholder="몸 상태를 짧게 (예: 목이 칼칼함)" autocomplete="off">${esc(c.note)}</textarea></label>
     <div class="hb-tags"><span>증상</span>${tags.map((t) => `<button type="button" class="tg" data-tag="${esc(t)}" aria-pressed="${c.tags.includes(t)}">#${esc(t)}</button>`).join('')}
       ${st.addingTag ? '<input id="h-newtag" class="tg-in" maxlength="20" placeholder="새 증상" autocomplete="off">' : '<button type="button" class="tg add" data-newtag aria-label="증상 추가">+</button>'}</div>
     <span class="notice hb-status" id="h-status">${esc(st.status || (st.configured ? '누르거나 쓰면 자동으로 저장돼요' : '노션 연결 전이에요'))}</span>
@@ -222,10 +222,16 @@ export async function renderHealth(el, ctx) {
   const paint = () => {
     el.innerHTML = ctx.mode === 'spread' ? spreadHtml(st) : singleHtml(st);
     const ni = el.querySelector('#h-note');
-    if (ni) ni.addEventListener('input', () => {
-      const c = st.conds[st.sel] || (st.conds[st.sel] = { date: st.sel, level: '', note: '', tags: [] });
-      c.note = ni.value; schedule(st, st.sel, 900); st.repaintStatus();
-    });
+    if (ni) {
+      // 글이 길어지면 칸이 아래로 늘어남 (줄바꿈 Enter 가능)
+      const grow = () => { ni.style.height = 'auto'; ni.style.height = `${ni.scrollHeight}px`; };
+      grow();
+      ni.addEventListener('input', () => {
+        grow();
+        const c = st.conds[st.sel] || (st.conds[st.sel] = { date: st.sel, level: '', note: '', tags: [] });
+        c.note = ni.value; schedule(st, st.sel, 900); st.repaintStatus();
+      });
+    }
     const nt = el.querySelector('#h-newtag');
     if (nt) {
       nt.focus();
