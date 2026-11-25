@@ -1,4 +1,4 @@
-// 건강: 컨디션(하루 한 번 · 5단계 + 한 줄 + 증상) · 점 달력 · 진료기록 · 증상 모아보기
+// 건강: 컨디션(하루 한 번 · 5단계 + 메모(노션 "한 줄" 칸) + 증상) · 점 달력 · 진료기록 · 증상 모아보기
 // 경로: #/health/YYYY-MM (컨디션) · #/health/tags (증상 모아보기) · #/health/visits (iPhone 진료기록)
 import { todayKey, todayParts, ymd, ym, addMonths, daysIn, monIndex, parseKey, esc, HOLIDAYS, DOW_KO, datePill } from '../util.js';
 import { getHealth, healthAction } from '../api.js';
@@ -53,7 +53,7 @@ function editBox(st) {
   return `<div class="hb-box">
     <div class="hb-top"><span class="hb-q">${label}</span>${st.conds[d] ? '<button type="button" class="linkbtn" data-clear>지우기</button>' : ''}</div>
     <div class="hb-lv" role="radiogroup" aria-label="컨디션">${LV.map((l) => `<button type="button" role="radio" aria-checked="${c.level === l.name}" data-level="${l.name}"><i style="background:${l.color}"></i>${l.name}</button>`).join('')}</div>
-    <label class="hb-note"><span>한 줄</span><textarea id="h-note" maxlength="1000" rows="1" placeholder="몸 상태를 짧게 (예: 목이 칼칼함)" autocomplete="off">${esc(c.note)}</textarea></label>
+    <label class="hb-note"><span>메모</span><textarea id="h-note" maxlength="5000" rows="1" placeholder="오늘 몸 상태를 자유롭게 (예: 목이 칼칼함)" autocomplete="off">${esc(c.note)}</textarea></label>
     <div class="hb-tags"><span>증상</span>${tags.map((t) => `<button type="button" class="tg" data-tag="${esc(t)}" aria-pressed="${c.tags.includes(t)}">#${esc(t)}</button>`).join('')}
       ${st.addingTag ? '<input id="h-newtag" class="tg-in" maxlength="20" placeholder="새 증상" autocomplete="off">' : '<button type="button" class="tg add" data-newtag aria-label="증상 추가">+</button>'}</div>
     <span class="notice hb-status" id="h-status">${esc(st.status || (st.configured ? '누르거나 쓰면 자동으로 저장돼요' : '노션 연결 전이에요'))}</span>

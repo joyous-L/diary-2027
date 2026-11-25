@@ -51,7 +51,7 @@ export async function onRequestPost({ request, env }) {
     if (b.kind === 'cond') {
       if (!DATE_RE.test(b.date || '')) return json({ error: 'bad_request' }, 400);
       const level = LEVELS.includes(b.level) ? b.level : null;
-      const note = String(b.note || '').trim().slice(0, 1000);
+      const note = String(b.note || '').trim().slice(0, 5000);
       const tags = [...new Set((Array.isArray(b.tags) ? b.tags : []).map((t) => String(t).trim().replace(/,/g, '').slice(0, 30)).filter(Boolean))].slice(0, 20);
       const found = await queryAll(env, DB.cond, { filter: { property: '날짜', date: { equals: b.date } } });
       if (!level && !note && !tags.length) {
