@@ -14,8 +14,8 @@ const BOOK_W = 1200 + 34;       // 책 + 인덱스 탭
 const BOOK_H = 800;
 
 const TABS = [
-  ['month', '월간'], ['week', '주간'], ['habit', '습관'], ['qt', '큐티'],
-  ['marks', '책갈피'], ['books', '완독'], ['notes', '노트'], ['health', '건강'],
+  ['month', '월간'], ['week', '주간'], ['qt', '큐티'], ['health', '건강'],
+  ['marks', '책갈피'], ['books', '완독'], ['notes', '노트'], ['habit', '습관'],
 ];
 const BOTTOM = [
   ['month', '월간', '<rect x="3" y="4" width="14" height="13" rx="2"/><path d="M3 8h14M7 2v4M13 2v4"/>'],
