@@ -1,5 +1,5 @@
 // 독서: 완독 리스트(한 해 표) + 책갈피(문장 카드, 책별 거르기)
-// iPhone: 위쪽 완독 | 책갈피 전환
+// iPhone: 위쪽 책갈피 | 완독 전환
 import { todayKey, todayParts, esc } from '../util.js';
 import { getBooks, bookAction, getMarks, markAction } from '../api.js';
 
@@ -22,8 +22,8 @@ const yearOf = (b) => Number((b.end || b.start || '').slice(0, 4)) || null;
 
 function segHtml(active) {
   return `<div class="seg" role="tablist">
-    <a role="tab" href="#/books" aria-selected="${active === 'books'}">완독</a>
     <a role="tab" href="#/marks" aria-selected="${active === 'marks'}">책갈피</a>
+    <a role="tab" href="#/books" aria-selected="${active === 'books'}">완독</a>
   </div>`;
 }
 

@@ -13,6 +13,7 @@
   --line-3: #E3DED3;
   --accent: #3E5C4A;
   --red: #B0463C;
+  --routine: #B08D57;
   --fade: #BDB7AA;
   --head: "Hyemin", "Apple SD Gothic Neo", sans-serif;
   --body: "Glasses", "Apple SD Gothic Neo", sans-serif;
@@ -118,7 +119,12 @@ button { font: inherit; color: inherit; }
 .mcell .ev::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex: none; }
 .mcell .more { font-size: 11px; color: var(--muted); }
 .legend { position: absolute; right: 36px; bottom: 12px; display: flex; justify-content: flex-end; gap: 6px; align-items: center; font-size: 11px; color: var(--muted); }
-.legend::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.legend { gap: 12px; }
+.legend .lg, .legend-s .lg { display: inline-flex; align-items: center; gap: 5px; }
+.legend .lg::before, .legend-s .lg::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.legend .lg.rt::before, .legend-s .lg.rt::before { background: var(--routine); }
+.legend-s { display: flex; gap: 12px; align-items: center; }
+.mcell .ev.rt::before, .sm-panel .ev.rt::before, .sm-day .dots i.rt { background: var(--routine); }
 
 /* ── 월간 (한 면) ── */
 .sm-head { padding: 20px 16px 12px; display: flex; align-items: flex-end; justify-content: space-between; }

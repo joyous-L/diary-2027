@@ -10,7 +10,7 @@ export function renderSoon(el, { mode, name }) {
 
 export function renderMore(el, { mode }) {
   const list = `<div class="more-list">
-    <a href="#/habit">습관</a><a href="#/notes">노트</a><a href="#/marks">책갈피</a><a href="#/cover">표지 보기</a>
+    <a href="#/notes">노트</a><a href="#/habit">습관</a><a href="#/cover">표지 보기</a>
   </div>`;
   el.innerHTML = mode === 'spread' ? `<div class="page left">${list}</div><div class="page right"></div>` : list;
 }

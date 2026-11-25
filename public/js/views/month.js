@@ -1,4 +1,4 @@
-// 월간: 02_Life 일정만. PC는 펼친 두 면(월·화·수 | 목·금·토·일), 좁은 창은 한 면 달력 + 고른 날 일정.
+// 월간: 02_Life + 01_Routine 일정(색으로 구분). PC는 펼친 두 면(월·화·수 | 목·금·토·일), 좁은 창은 한 면 달력 + 고른 날 일정.
 import { getEvents, groupByDate } from '../api.js';
 import {
   todayParts, todayKey, ymd, ym, addMonths, daysIn, monIndex, monthGrid,
@@ -34,7 +34,7 @@ function miniHtml(y, m) {
 function cellHtml(cell, byDate, today) {
   const hol = cell.inMonth ? HOLIDAYS[cell.key] : '';
   const evs = cell.inMonth ? (byDate[cell.key] || []) : [];
-  const shown = evs.slice(0, MAX_EVENTS).map((e) => `<span class="ev">${esc(eventLabel(e))}</span>`).join('');
+  const shown = evs.slice(0, MAX_EVENTS).map((e) => `<span class="ev${e.cal === 'routine' ? ' rt' : ''}">${esc(eventLabel(e))}</span>`).join('');
   const more = evs.length > MAX_EVENTS ? `<span class="more">+${evs.length - MAX_EVENTS}</span>` : '';
   const label = `${cell.m}월 ${cell.d}일${hol ? ` ${hol}` : ''}${evs.length ? `, 일정 ${evs.length}개` : ''}`;
   return `<button type="button" class="mcell${cell.key === today ? ' today' : ''}" data-key="${cell.key}" aria-label="${esc(label)}">
@@ -70,7 +70,7 @@ function spreadHtml(y, m, weeks, byDate, status) {
     <div class="mgrid">
       <div class="mhead c4">${DOW_EN.slice(3).map((d, i) => `<span${i === 3 ? ' style="color:var(--red)"' : ''}>${d}</span>`).join('')}</div>${right}
     </div>
-    <div class="legend">02_Life 일정${status}</div>
+    <div class="legend"><span class="lg">02_Life</span><span class="lg rt">01_Routine</span>${status}</div>
   </div></div>`;
 }
 
@@ -83,7 +83,7 @@ function singleHtml(y, m, weeks, byDate, status) {
   const rows = weeks.map((w) => `<div class="sm-week">${w.map((c) => {
     const hol = c.inMonth ? HOLIDAYS[c.key] : '';
     const evs = c.inMonth ? (byDate[c.key] || []) : [];
-    const dots = evs.slice(0, 3).map(() => '<i></i>').join('') || (hol ? '<i class="h"></i>' : '');
+    const dots = evs.slice(0, 3).map((e) => (e.cal === 'routine' ? '<i class="rt"></i>' : '<i></i>')).join('') || (hol ? '<i class="h"></i>' : '');
     const cls = ['sm-day', c.key === selectedKey && 'sel', c.key === today && 'today'].filter(Boolean).join(' ');
     return `<button type="button" class="${cls}" data-key="${c.key}" ${c.inMonth ? '' : 'tabindex="-1"'} aria-pressed="${c.key === selectedKey}"
       aria-label="${c.m}월 ${c.d}일${evs.length ? `, 일정 ${evs.length}개` : ''}">
@@ -95,7 +95,7 @@ function singleHtml(y, m, weeks, byDate, status) {
   const shol = HOLIDAYS[selectedKey];
   const sevs = byDate[selectedKey] || [];
   const list = sevs.length
-    ? sevs.map((e) => `<span class="ev">${esc(eventLabel(e, true))}</span>`).join('')
+    ? sevs.map((e) => `<span class="ev${e.cal === 'routine' ? ' rt' : ''}">${esc(eventLabel(e, true))}</span>`).join('')
     : '<span class="muted" style="font-size:15px">일정 없음</span>';
 
   return `
@@ -116,7 +116,7 @@ function singleHtml(y, m, weeks, byDate, status) {
   <section class="sm-panel" aria-live="polite">
     <div class="ph"><b style="color:${sdow === 6 || shol ? 'var(--red)' : 'var(--ink)'}">${sm}월 ${sd}일</b><span class="head muted">${DOW_KO[sdow]}요일</span>${shol ? `<span style="color:var(--red);font-size:13px">${esc(shol)}</span>` : ''}</div>
     ${list}
-    <span class="notice" style="margin-top:4px">02_Life 일정${status}</span>
+    <span class="notice legend-s" style="margin-top:4px"><span class="lg">02_Life</span><span class="lg rt">01_Routine</span>${status}</span>
   </section>`;
 }
 
@@ -135,10 +135,15 @@ export async function renderMonth(el, ctx) {
   };
   paint({}, ' · 불러오는 중');
 
-  const data = await getEvents('life', first, endKey);
+  const [life, rt] = await Promise.all([getEvents('life', first, endKey), getEvents('routine', first, endKey)]);
   if (!ctx.isCurrent()) return;
-  const byDate = groupByDate(data.events || []);
-  const status = data.configured === false ? ' · 캘린더 연결 전' : data.error ? ' · 불러오지 못했어요' : '';
+  // 하루 안에서는 02_Life 먼저, 그다음 01_Routine
+  const byDate = groupByDate([
+    ...(life.events || []).map((e) => ({ ...e, cal: 'life' })),
+    ...(rt.events || []).map((e) => ({ ...e, cal: 'routine' })),
+  ]);
+  const bad = [life, rt].filter((d) => d.configured === false || d.error);
+  const status = !bad.length ? '' : bad.some((d) => d.configured === false) ? ' · 캘린더 연결 전' : ' · 일부 불러오지 못했어요';
   paint(byDate, status);
 
   el.onclick = (ev) => {
