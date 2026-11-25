@@ -45,6 +45,17 @@ function habitBlock(st, compactLabel) {
   }).join('');
 }
 
+// 감사: 노션 "감사" 칸에 줄바꿈으로 최대 3개 저장
+const THANKS_N = 3;
+const thanksList = (t) => String(t || '').split('\n').map((x) => x.trim()).filter(Boolean);
+function thanksSlots(t) {
+  const a = String(t || '').split('\n');
+  const out = a.slice(0, THANKS_N - 1);
+  out.push(a.slice(THANKS_N - 1).join(' '));
+  while (out.length < THANKS_N) out.push('');
+  return out.map((x) => x.trim());
+}
+
 function dayCell(st, day) {
   const evs = st.routine[day.key] || [];
   const dia = st.diary[day.key] || {};
@@ -53,7 +64,7 @@ function dayCell(st, day) {
     <span class="wday-h">${datePill(day.label, day.en, { red: day.red, today: day.key === st.today })}${day.hol ? `<span class="hol">${esc(day.hol)}</span>` : ''}</span>
     <span class="wday-rt">${routineLines(evs)}</span>
     <span class="wday-bottom">
-      <span class="thanks"><em>감사</em><span>${esc(dia.thanks || '')}</span></span>
+      <span class="thanks"><em>감사</em><span>${esc(thanksList(dia.thanks).join(' · '))}</span></span>
       <span class="ruled preview" style="-webkit-line-clamp:${lines};color:${dia.text ? 'var(--ink)' : 'var(--hint)'}">${esc(dia.text || '눌러서 일기 쓰기')}</span>
     </span>
   </button>`;
@@ -114,7 +125,9 @@ function singleHtml(st) {
         <span class="head" style="font-size:16px;color:${day.red ? 'var(--red)' : 'var(--ink)'}">${day.en}</span>${day.hol ? `<span class="hol">${esc(day.hol)}</span>` : ''}</div>
       <div class="sw-rt">${routineLines(evs) || '<span class="muted" style="font-size:14px">루틴 기록 없음</span>'}</div>
       <button type="button" class="sw-open" data-open="${st.sel}">
-        <span class="thanks"><em>감사</em><span style="color:${dia.thanks ? 'var(--ink)' : 'var(--hint)'}">${esc(dia.thanks || '한 줄 남기기')}</span></span>
+        <span class="thanks th-list"><em>감사</em>${thanksList(dia.thanks).length
+          ? `<span class="th-items">${thanksList(dia.thanks).map((x, i) => `<span><b>${i + 1}</b>${esc(x)}</span>`).join('')}</span>`
+          : '<span style="color:var(--hint)">감사 세 가지 남기기</span>'}</span>
         <span class="preview4" style="color:${dia.text ? 'var(--ink)' : 'var(--hint)'}">${esc(dia.text || '아직 쓴 일기가 없어요')}</span>
         <span class="go">일기 열기 ›</span>
       </button>
@@ -143,7 +156,8 @@ function diaryHtml(st, key) {
         </span>
       </header>
       <div class="dlg-chips">${evs.map((e) => `<span class="tag"><b>${esc(e.allDay ? '종일' : (e.start === e.end ? e.start : `${e.start}~${e.end}`))}</b>${esc(e.title)}</span>`).join('')}</div>
-      <label class="dlg-thanks"><span>감사</span><input type="text" id="f-thanks" maxlength="300" value="${esc(dia.thanks || '')}" placeholder="감사한 일 한 줄"></label>
+      <div class="dlg-thanks"><span>감사</span><div class="th-ins">${thanksSlots(dia.thanks).map((v, i) =>
+        `<label><b>${i + 1}</b><input type="text" class="f-thanks" maxlength="300" value="${esc(v)}" placeholder="${['감사한 일', '하나 더', '마지막 하나'][i]}" aria-label="감사 ${i + 1}"></label>`).join('')}</div></div>
       <label class="dlg-text"><span>일기</span><textarea id="f-text" class="ruled" placeholder="오늘 하루를 적어 보세요">${esc(dia.text || '')}</textarea></label>
       <footer class="dlg-f"><span id="f-status" class="notice">${st.configured === false ? '노션 연결 전이라 저장되지 않아요' : '쓰면 자동으로 저장돼요'}</span>
         <button type="button" class="btn" data-close="1">완료</button></footer>
@@ -180,7 +194,8 @@ export async function renderWeek(el, ctx) {
   };
 
   const bindDialog = () => {
-    const thanks = el.querySelector('#f-thanks');
+    const thanksIns = [...el.querySelectorAll('.f-thanks')];
+    const thanks = { get value() { const v = thanksIns.map((n) => n.value.replace(/\n/g, ' ').trim()); while (v.length && !v[v.length - 1]) v.pop(); return v.join('\n'); } };
     const text = el.querySelector('#f-text');
     const status = el.querySelector('#f-status');
     const setStatus = (s) => { if (status && status.isConnected) status.textContent = s; };
@@ -192,7 +207,11 @@ export async function renderWeek(el, ctx) {
       if (st.configured !== false) setStatus('입력 중…');
       saveTimer = setTimeout(() => flushSave(setStatus), 1200);
     };
-    thanks.addEventListener('input', onInput);
+    thanksIns.forEach((n, i) => {
+      n.addEventListener('input', onInput);
+      // Enter → 다음 칸으로
+      n.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); (thanksIns[i + 1] || text).focus(); } });
+    });
     text.addEventListener('input', onInput);
     (ctx.mode === 'spread' ? text : null)?.focus();
   };

@@ -218,7 +218,15 @@ button { font: inherit; color: inherit; }
 .dlg-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .tag { display: inline-flex; gap: 6px; align-items: baseline; padding: 5px 11px; border-radius: 14px; background: #F0EBDF; font-size: 14px; }
 .tag b { font-weight: normal; color: var(--accent); font-size: 12px; }
-.dlg-thanks { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line-2); }
+.dlg-thanks { display: flex; align-items: flex-start; gap: 10px; }
+.dlg-thanks > span { padding-top: 11px; }
+.th-ins { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.th-ins label { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--line-2); }
+.th-ins b, .th-items b { font-weight: normal; font-family: var(--head); font-size: 13px; color: var(--accent); width: 14px; flex: none; text-align: center; }
+.sw-open .th-list { align-items: flex-start; }
+.sw-open .th-list em { padding-top: 3px; }
+.th-items { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.th-items > span { display: flex; gap: 8px; align-items: baseline; white-space: normal; overflow-wrap: anywhere; }
 .dlg-thanks span, .dlg-text > span { font-size: 12px; color: var(--muted); flex: none; }
 .dlg input, .dlg textarea { font-family: var(--body); color: var(--ink); border: 0; background-color: transparent; outline: none; }
 .dlg input { flex: 1; min-width: 0; font-size: 16px; min-height: 40px; }
