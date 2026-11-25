@@ -775,11 +775,10 @@ body[data-mode="single"] .cover .open { bottom: calc(7% + env(safe-area-inset-bo
 .wsec > em { font-style: normal; font-family: var(--head); font-size: 12px; color: var(--accent); display: flex; align-items: center; gap: 5px; flex: none; }
 .wsec-th { flex: none; border-bottom: 1px solid var(--line); font-size: 13px; line-height: 1.45; }
 .wsec-th .th-items > span { white-space: normal; overflow: visible; }
-.wsec-empty { color: var(--hint); font-family: var(--body); font-size: 12px; margin-left: 4px; }
+.wsec-empty { color: var(--hint); font-family: var(--body); font-size: 13px; }
 .wsec-dia { flex: 1; min-height: 0; position: relative; padding-bottom: 0; }
-.dia-ic { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--line); color: var(--hint); }
+.dia-ic { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--accent); color: var(--paper); margin-left: 2px; }
 .dia-ic svg { width: 11px; height: 11px; }
-.wsec-dia.on .dia-ic { background: var(--accent); border-color: var(--accent); color: var(--paper); }
 .wday .preview { display: block; flex: 1; min-height: 34px; -webkit-line-clamp: unset; color: var(--ink); }
 .fadebox.over { -webkit-mask-image: linear-gradient(to bottom, #000 max(calc(100% - 40px), 55%), transparent); mask-image: linear-gradient(to bottom, #000 max(calc(100% - 40px), 55%), transparent); }
 .more-cue { display: none; position: absolute; right: 4px; bottom: 4px; font-size: 11px; color: var(--accent); background: var(--paper); padding: 0 2px 0 8px; }

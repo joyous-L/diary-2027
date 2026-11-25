@@ -87,8 +87,8 @@ function dayCell(st, day) {
       ? `<span class="th-items">${th.map((x, i) => `<span><b>${i + 1}</b>${esc(x)}</span>`).join('')}</span>`
       : '<span class="wsec-empty">—</span>'}</span>
     <span class="wsec wsec-dia${hasDia ? ' on' : ''}">
-      <em><span class="dia-ic">${PEN}</span>일기${hasDia ? '' : '<span class="wsec-empty">눌러서 쓰기</span>'}</em>
-      ${hasDia ? `<span class="ruled preview fadebox snap">${esc(dia.text)}</span><span class="more-cue">이어서 ›</span>` : ''}
+      <em>일기${hasDia ? `<span class="dia-ic" title="일기 있음">${PEN}</span>` : ''}</em>
+      ${hasDia ? `<span class="ruled preview fadebox snap">${esc(dia.text)}</span><span class="more-cue">이어서 ›</span>` : '<span class="wsec-empty">—</span>'}
     </span>
   </button>`;
 }
