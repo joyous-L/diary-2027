@@ -787,3 +787,7 @@ body[data-mode="single"] .cover .open { bottom: calc(7% + env(safe-area-inset-bo
 body[data-mode="spread"] .wsec-th { font-size: 15px; }
 body[data-mode="spread"] .wsec > em { font-size: 14px; }
 body[data-mode="spread"] .wsec-empty { font-size: 13px; }
+
+/* PC 주간 습관: 목록 스크롤바 폭만큼 머리(월~일)도 비워 두어 요일과 체크 칸을 맞춤 (2026-11-26) */
+.whab .hhead { overflow-y: hidden; scrollbar-gutter: stable; scrollbar-width: thin; }
+.whab-list { scrollbar-gutter: stable; }
