@@ -22,9 +22,17 @@ const BOTTOM = [
   ['week', '주간', '<rect x="3" y="3" width="14" height="14" rx="2"/><path d="M10 3v14M3 10h14"/>'],
   ['qt', '큐티', '<path d="M5 4h10v13l-5-3-5 3z"/>'],
   ['books', '독서', '<path d="M3 4.5C5 3.5 8 3.5 10 5c2-1.5 5-1.5 7-.5V16c-2-1-5-1-7 .5C8 15 5 15 3 16z"/><path d="M10 5v11.5"/>'],
+  ['health', '건강', '<path d="M10 16.5S3 12.3 3 7.6A3.6 3.6 0 0 1 10 6a3.6 3.6 0 0 1 7 1.6c0 4.7-7 8.9-7 8.9z"/><path d="M5.5 10h2.3l1.2-2 2 4 1.2-2h2.3"/>'],
   ['more', '더보기', '<circle cx="5" cy="10" r="1.2"/><circle cx="10" cy="10" r="1.2"/><circle cx="15" cy="10" r="1.2"/>'],
 ];
-const MORE_GROUP = new Set(['more', 'habit', 'notes', 'health']);
+const MORE_GROUP = new Set(['more', 'habit', 'notes']);
+// 더보기 팝업(아래에서 올라오는 시트) 항목
+const MORE_ITEMS = [
+  ['habit', '습관', '<rect x="3" y="3" width="14" height="14" rx="3"/><path d="M6.5 10.2l2.4 2.4 4.6-5"/>'],
+  ['notes', '노트', '<path d="M5 2.5h7l3 3v12H5z"/><path d="M12 2.5v3h3M7.5 9.5h5M7.5 12.5h5M7.5 15.5h3"/>'],
+  ['marks', '책갈피', '<path d="M6 2.5h8v15l-4-3-4 3z"/>'],
+  ['cover', '표지 보기', '<rect x="4" y="2.5" width="12" height="15" rx="1.5"/><path d="M6.5 2.5v15M9 7.5h5"/>'],
+];
 const READING_GROUP = new Set(['books', 'marks']);
 
 const VIEWS = { cover: renderCover, month: renderMonth, week: renderWeek, habit: renderHabit, qt: renderQt, books: renderBooks, marks: renderMarks, health: renderHealth, notes: renderNotes, more: renderMore };
@@ -47,8 +55,44 @@ function tabsHtml(active) {
 
 function bottomHtml(active) {
   const isOn = (id) => id === active || (id === 'more' && MORE_GROUP.has(active)) || (id === 'books' && READING_GROUP.has(active));
-  return `<nav class="bottombar" aria-label="다이어리 목차">${BOTTOM.map(([id, label, icon]) =>
-    `<a href="#/${id}"${isOn(id) ? ' aria-current="page"' : ''}><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">${icon}</svg>${label}</a>`).join('')}</nav>`;
+  const svg = (icon) => `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icon}</svg>`;
+  const items = BOTTOM.map(([id, label, icon]) => id === 'more'
+    ? `<button type="button" class="more-btn" aria-haspopup="dialog" aria-expanded="false"${isOn(id) ? ' aria-current="page"' : ''}>${svg(icon)}${label}</button>`
+    : `<a href="#/${id}"${isOn(id) ? ' aria-current="page"' : ''}>${svg(icon)}${label}</a>`).join('');
+  const sheet = `<div class="sheet-back" hidden><div class="sheet" role="dialog" aria-label="더보기">
+    <div class="sheet-grip" aria-hidden="true"></div>
+    ${MORE_ITEMS.map(([id, label, icon]) => `<a href="#/${id}"${id === active ? ' aria-current="page"' : ''}><span class="ic">${svg(icon)}</span>${label}</a>`).join('')}
+  </div></div>`;
+  return `<nav class="bottombar" aria-label="다이어리 목차">${items}</nav>${sheet}`;
+}
+
+// 더보기 시트 열기·닫기 (바깥 누르기, 아래로 쓸어내리기, Esc)
+function wireMoreSheet(root) {
+  const btn = root.querySelector('.more-btn');
+  const back = root.querySelector('.sheet-back');
+  if (!btn || !back) return;
+  const sheet = back.querySelector('.sheet');
+  const open = () => { back.hidden = false; requestAnimationFrame(() => back.classList.add('on')); btn.setAttribute('aria-expanded', 'true'); };
+  const close = () => {
+    back.classList.remove('on'); btn.setAttribute('aria-expanded', 'false'); sheet.style.transform = '';
+    setTimeout(() => { if (!back.classList.contains('on')) back.hidden = true; }, 220);
+  };
+  btn.addEventListener('click', () => (back.hidden ? open() : close()));
+  back.addEventListener('click', (e) => { if (e.target === back) close(); });
+  sheet.addEventListener('click', (e) => { if (e.target.closest('a')) close(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !back.hidden) close(); });
+  let y0 = null;
+  sheet.addEventListener('touchstart', (e) => { y0 = e.touches[0].clientY; sheet.style.transition = 'none'; }, { passive: true });
+  sheet.addEventListener('touchmove', (e) => {
+    if (y0 == null) return;
+    const dy = Math.max(0, e.touches[0].clientY - y0);
+    sheet.style.transform = `translateY(${dy}px)`;
+  }, { passive: true });
+  sheet.addEventListener('touchend', (e) => {
+    if (y0 == null) return;
+    const dy = e.changedTouches[0].clientY - y0; y0 = null; sheet.style.transition = '';
+    if (dy > 60) close(); else sheet.style.transform = '';
+  });
 }
 
 function fitBook() {
@@ -80,6 +124,7 @@ async function render() {
     fitBook();
   } else {
     root.innerHTML = `<div class="phone"><div id="view" class="single"></div>${bottomHtml(name)}</div>`;
+    wireMoreSheet(root);
   }
   await view(document.getElementById('view'), { mode, arg, name, go, isCurrent: () => id === renderId });
 }

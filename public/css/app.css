@@ -50,12 +50,26 @@ button { font: inherit; color: inherit; }
 /* ── 한 면 보기 (좁은 창·iPhone) ── */
 .phone { min-height: 100vh; min-height: 100dvh; background: var(--paper); display: flex; flex-direction: column; max-width: 640px; margin: 0 auto; }
 .single { flex: 1; display: flex; flex-direction: column; padding-top: env(safe-area-inset-top); }
-.bottombar { position: sticky; bottom: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid var(--line-2);
-  background: #F6F2E8; padding: 6px 8px calc(10px + env(safe-area-inset-bottom)); }
-.bottombar a { min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+.bottombar { position: sticky; bottom: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border-top: 1px solid var(--line-2);
+  background: #F6F2E8; padding: 6px 4px calc(10px + env(safe-area-inset-bottom)); z-index: 20; }
+.bottombar a, .bottombar .more-btn { all: unset; cursor: pointer; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
   text-decoration: none; color: var(--muted); font-size: 12px; }
-.bottombar a[aria-current="page"] { color: var(--accent); }
+.bottombar a[aria-current="page"], .bottombar .more-btn[aria-current="page"], .bottombar .more-btn[aria-expanded="true"] { color: var(--accent); }
 .bottombar svg { width: 20px; height: 20px; }
+
+/* 더보기 시트 (아래에서 올라오는 팝업) */
+.sheet-back { position: fixed; inset: 0; z-index: 30; background: rgba(59, 58, 54, 0); transition: background 0.2s; display: flex; align-items: flex-end; justify-content: center; }
+.sheet-back[hidden] { display: none; }
+.sheet-back.on { background: rgba(59, 58, 54, 0.32); }
+.sheet { width: 100%; max-width: 640px; background: var(--paper); border-radius: 18px 18px 0 0; padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; gap: 8px; transform: translateY(100%); transition: transform 0.22s ease; box-shadow: 0 -8px 24px rgba(40, 50, 40, 0.14); }
+.sheet-back.on .sheet { transform: translateY(0); }
+.sheet-grip { width: 38px; height: 5px; border-radius: 3px; background: var(--line-2); margin: 2px auto 8px; }
+.sheet a { min-height: 56px; padding: 0 16px; display: flex; align-items: center; gap: 14px; border-radius: 12px; background: var(--paper-2);
+  color: var(--ink); text-decoration: none; font-family: var(--head); font-size: 19px; }
+.sheet a[aria-current="page"] { color: var(--accent); }
+.sheet .ic { width: 34px; height: 34px; border-radius: 10px; background: rgba(62, 92, 74, 0.1); color: var(--accent); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.sheet .ic svg { width: 20px; height: 20px; }
 
 /* ── 표지 ── */
 .cover-desk { align-items: center; min-height: 100vh; min-height: 100dvh; padding: 24px; }
