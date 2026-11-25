@@ -151,7 +151,7 @@ function singleHtml(st) {
         <span class="thanks th-list"><em>감사</em>${thanksList(dia.thanks).length
           ? `<span class="th-items">${thanksList(dia.thanks).map((x, i) => `<span><b>${i + 1}</b>${esc(x)}</span>`).join('')}</span>`
           : '<span style="color:var(--hint)">감사 세 가지 남기기</span>'}</span>
-        <span class="preview4" style="color:${dia.text ? 'var(--ink)' : 'var(--hint)'}">${esc(dia.text || '아직 쓴 일기가 없어요')}</span>
+        <span class="preview4 fadebox" style="color:${dia.text ? 'var(--ink)' : 'var(--hint)'}">${esc(dia.text || '아직 쓴 일기가 없어요')}</span>
         <span class="go">일기 열기 ›</span>
       </button>
     </section>
