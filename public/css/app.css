@@ -768,3 +768,22 @@ body[data-mode="single"] .cover .band .y { font-size: 24px; }
 body[data-mode="single"] .cover .band .t { font-size: clamp(36px, 11vw, 48px); }
 body[data-mode="single"] .cover .band .s { font-size: 15px; }
 body[data-mode="single"] .cover .open { bottom: calc(7% + env(safe-area-inset-bottom)); min-height: 48px; padding: 0 32px; border-radius: 24px; font-size: 17px; }
+
+/* ── PC 주간 요일 칸: 일정 | 감사 | 일기 구분 (2026-11-25) ── */
+.wday .wday-rt { flex: 0 1 auto; max-height: 168px; overflow: hidden; border-bottom: 1px solid var(--line); }
+.wsec { display: flex; flex-direction: column; gap: 4px; padding: 8px 4px; min-width: 0; }
+.wsec > em { font-style: normal; font-family: var(--head); font-size: 12px; color: var(--accent); display: flex; align-items: center; gap: 5px; flex: none; }
+.wsec-th { flex: none; border-bottom: 1px solid var(--line); font-size: 13px; line-height: 1.45; }
+.wsec-th .th-items > span { white-space: normal; overflow: visible; }
+.wsec-empty { color: var(--hint); font-family: var(--body); font-size: 12px; margin-left: 4px; }
+.wsec-dia { flex: 1; min-height: 0; position: relative; padding-bottom: 0; }
+.dia-ic { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--line); color: var(--hint); }
+.dia-ic svg { width: 11px; height: 11px; }
+.wsec-dia.on .dia-ic { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+.wday .preview { display: block; flex: 1; min-height: 34px; -webkit-line-clamp: unset; color: var(--ink); }
+.fadebox.over { -webkit-mask-image: linear-gradient(to bottom, #000 max(calc(100% - 40px), 55%), transparent); mask-image: linear-gradient(to bottom, #000 max(calc(100% - 40px), 55%), transparent); }
+.more-cue { display: none; position: absolute; right: 4px; bottom: 4px; font-size: 11px; color: var(--accent); background: var(--paper); padding: 0 2px 0 8px; }
+.wsec-dia:has(.preview.over) .more-cue { display: block; }
+body[data-mode="spread"] .wsec-th { font-size: 15px; }
+body[data-mode="spread"] .wsec > em { font-size: 14px; }
+body[data-mode="spread"] .wsec-empty { font-size: 13px; }

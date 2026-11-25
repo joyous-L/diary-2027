@@ -45,6 +45,22 @@ function habitBlock(st, compactLabel) {
   }).join('');
 }
 
+// 넘치는 칸만 아래를 흐리게. 일기 미리보기는 줄(34px) 단위로 높이를 맞춰 반쯤 걸친 줄이 없게
+function fitFades(root) {
+  requestAnimationFrame(() => {
+    for (const n of root.querySelectorAll('.fadebox')) {
+      n.classList.remove('over');
+      if (n.classList.contains('snap')) {
+        n.style.maxHeight = '';
+        const lh = parseFloat(getComputedStyle(n).lineHeight) || 34;
+        const h = Math.max(lh, Math.floor(n.clientHeight / lh) * lh);
+        n.style.maxHeight = `${h}px`;
+      }
+      n.classList.toggle('over', n.scrollHeight > n.clientHeight + 2);
+    }
+  });
+}
+
 // 감사: 노션 "감사" 칸에 줄바꿈으로 최대 3개 저장
 const THANKS_N = 3;
 const thanksList = (t) => String(t || '').split('\n').map((x) => x.trim()).filter(Boolean);
@@ -56,16 +72,23 @@ function thanksSlots(t) {
   return out.map((x) => x.trim());
 }
 
+const PEN = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16l1-3.5L13.5 4a1.4 1.4 0 0 1 2 0l.5.5a1.4 1.4 0 0 1 0 2L7.5 15z"/><path d="M12 5.5l2.5 2.5"/></svg>';
+
+// PC 요일 칸: 일정 | 감사(전부 보임) | 일기(있으면 아이콘 · 넘치면 아래가 흐려짐)
 function dayCell(st, day) {
   const evs = st.routine[day.key] || [];
   const dia = st.diary[day.key] || {};
-  const lines = Math.max(1, Math.floor((355 - 44 - 20 - evs.length * 23 - 31) / 34));
-  return `<button type="button" class="wday" data-open="${day.key}" aria-label="${day.m}월 ${day.d}일 일기 열기">
+  const th = thanksList(dia.thanks);
+  const hasDia = !!(dia.text && dia.text.trim());
+  return `<button type="button" class="wday" data-open="${day.key}" aria-label="${day.m}월 ${day.d}일 일기 열기${hasDia ? ', 일기 있음' : ''}">
     <span class="wday-h">${datePill(day.label, day.en, { red: day.red, today: day.key === st.today })}${day.hol ? `<span class="hol">${esc(day.hol)}</span>` : ''}</span>
-    <span class="wday-rt">${routineLines(evs)}</span>
-    <span class="wday-bottom">
-      <span class="thanks"><em>감사</em><span>${esc(thanksList(dia.thanks).join(' · '))}</span></span>
-      <span class="ruled preview" style="-webkit-line-clamp:${lines};color:${dia.text ? 'var(--ink)' : 'var(--hint)'}">${esc(dia.text || '눌러서 일기 쓰기')}</span>
+    ${evs.length ? `<span class="wday-rt fadebox">${routineLines(evs)}</span>` : ''}
+    <span class="wsec wsec-th"><em>감사</em>${th.length
+      ? `<span class="th-items">${th.map((x, i) => `<span><b>${i + 1}</b>${esc(x)}</span>`).join('')}</span>`
+      : '<span class="wsec-empty">—</span>'}</span>
+    <span class="wsec wsec-dia${hasDia ? ' on' : ''}">
+      <em><span class="dia-ic">${PEN}</span>일기${hasDia ? '' : '<span class="wsec-empty">눌러서 쓰기</span>'}</em>
+      ${hasDia ? `<span class="ruled preview fadebox snap">${esc(dia.text)}</span><span class="more-cue">이어서 ›</span>` : ''}
     </span>
   </button>`;
 }
@@ -190,6 +213,7 @@ export async function renderWeek(el, ctx) {
     st.sel = selected;
     // 다시 그려도 스크롤 위치 유지 (습관 칸 안 스크롤 · 화면 스크롤)
     keepScroll(el, () => { el.innerHTML = (ctx.mode === 'spread' ? spreadHtml(st) : singleHtml(st)) + (openDay ? diaryHtml(st, openDay) : ''); });
+    fitFades(el);
     if (openDay) bindDialog();
   };
 
