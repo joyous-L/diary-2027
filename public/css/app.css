@@ -375,7 +375,8 @@ body[data-mode="single"] .dlg.hdlg { height: auto; min-height: 100%; }
 .qt-h { font-family: var(--head); font-size: 20px; color: var(--accent); }
 .qt-sh { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .qt-sh .muted { font-size: 14px; }
-.qt-title { font-family: var(--head); font-size: 16px; }
+.qt-title { font-family: var(--head); font-size: 16px; display: inline-flex; align-self: flex-start; width: fit-content; align-items: center; gap: 8px; padding: 5px 14px 5px 11px; border-radius: 999px; background: rgba(62, 92, 74, 0.1); color: var(--accent); line-height: 1.4; }
+.qt-title::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
 .qt-word { display: flex; flex-direction: column; gap: 10px; flex: none; max-height: 56%; min-height: 0; }
 .qt-verses { overflow-y: auto; scrollbar-width: thin; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
 .qt-verses p { margin: 0; display: flex; gap: 10px; font-size: 15px; line-height: 1.7; }
